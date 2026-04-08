@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-EXCEL_PATH = Path("data/주간실적데이터.xlsx")
+EXCEL_PATH = Path("data/실적데이터.xlsx")
 OUTPUT_PATH = Path("dashboard_data.json")
 
 def safe(v):

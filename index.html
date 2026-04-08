@@ -1,0 +1,2523 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>주간 실적 대시보드 — 2026 4월</title>
+<style>
+/* ── 완전 독립형 (외부 의존성 없음) ── */
+:root {
+  --bg:#f4f6fb; --bg2:#ffffff; --bg3:#f0f2f8; --bg4:#e4e8f2;
+  --border:rgba(0,0,0,.08); --border2:rgba(0,0,0,.14);
+  --text:#1a2035; --text2:#4a5470; --text3:#9099b5;
+  --accent:#3b6ef5; --teal:#0ea97e; --red:#e03c3c;
+  --amber:#d98b10; --green:#2ba84a; --purple:#7c5ce8; --coral:#e8650a;
+  --font:-apple-system,'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+.app{display:flex;min-height:100vh}
+
+/* sidebar */
+.sidebar{width:210px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#4f80ff,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.logo-text{font-size:13px;font-weight:600}
+.logo-sub{font-size:10px;color:var(--text3);margin-top:1px}
+.sidebar-nav{padding:12px 10px;flex:1}
+.nav-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;padding:0 8px;margin:12px 0 5px}
+.nav-label:first-child{margin-top:0}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;font-size:12px;color:var(--text2);cursor:pointer;margin-bottom:1px}
+.nav-item.active{background:rgba(59,110,245,.1);color:var(--accent)}
+.nav-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.sidebar-footer{padding:12px 18px;border-top:1px solid var(--border);font-size:11px;color:var(--text3)}
+.pulse{width:5px;height:5px;border-radius:50%;background:var(--teal);display:inline-block;margin-right:5px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* main */
+.main{flex:1;padding:26px 30px;overflow-x:hidden;min-width:0}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.page-title{font-size:21px;font-weight:700;letter-spacing:-.02em}
+.page-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.header-right{display:flex;align-items:center;gap:8px}
+.badge-week{background:rgba(59,110,245,.1);border:1px solid rgba(59,110,245,.25);color:var(--accent);font-size:11px;font-weight:600;padding:4px 11px;border-radius:100px}
+
+/* 4월 배너 */
+.mar-banner{background:var(--bg2);border:1px solid rgba(245,166,35,.3);border-left:3px solid var(--amber);border-radius:10px;padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.mar-banner-text{font-size:12px;color:var(--text2);flex:1;line-height:1.5}
+.mar-banner-text strong{color:var(--amber)}
+.mar-prog-track{width:110px;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;flex-shrink:0}
+.mar-prog-fill{height:100%;background:var(--amber);border-radius:3px;width:10%}
+.mar-prog-label{font-size:11px;font-weight:600;color:var(--amber);white-space:nowrap;margin-left:6px}
+
+/* toggle */
+.toggle-wrap{display:flex;align-items:center;gap:8px;margin-bottom:18px}
+.toggle-lbl{font-size:12px;color:var(--text3)}
+.toggle-lbl.on{color:var(--text2);font-weight:500}
+.toggle-btn{width:34px;height:18px;border-radius:9px;background:var(--bg4);border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;padding:0}
+.toggle-btn.active{background:var(--amber)}
+.toggle-thumb{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s}
+.toggle-btn.active .toggle-thumb{transform:translateX(16px)}
+.proj-note{font-size:11px;color:var(--amber);background:rgba(200,130,10,.08);border:1px solid rgba(200,130,10,.2);border-radius:6px;padding:2px 9px;display:none}
+.proj-note.on{display:inline-block}
+
+/* kpi */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:18px 20px;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi-card.c1::before{background:linear-gradient(90deg,#3b6ef5,#7c5ce8)}
+.kpi-card.c2::before{background:linear-gradient(90deg,#0ea97e,#0bcfb0)}
+.kpi-card.c3::before{background:linear-gradient(90deg,#d93232,#e86060)}
+.kpi-card.c4::before{background:linear-gradient(90deg,#d98b10,#f0b030)}
+.kpi-lbl{font-size:10px;font-weight:500;color:var(--text3);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
+.kpi-val{font-size:26px;font-weight:700;letter-spacing:-.02em}
+.kpi-unit{font-size:13px;font-weight:400;color:var(--text2);margin-left:2px}
+.kpi-foot{display:flex;align-items:center;gap:5px;margin-top:8px;flex-wrap:wrap}
+.chip{font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px}
+.chip.r{background:rgba(220,50,50,.1);color:#c0202f}
+.chip.g{background:rgba(30,160,80,.1);color:#1a8040}
+.chip.a{background:rgba(200,130,10,.1);color:#a06000}
+.chip-lbl{font-size:10px;color:var(--text3)}
+.proj-badge{font-size:10px;color:var(--amber);background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);border-radius:4px;padding:1px 5px;display:none}
+.proj-badge.on{display:inline-block}
+
+/* section */
+.sec{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* layout */
+.row2{display:grid;grid-template-columns:3fr 2fr;gap:14px;margin-bottom:18px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:18px}
+.row-eq{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.card-sub{font-size:11px;color:var(--text3);margin-bottom:14px}
+
+/* legend */
+.leg{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2)}
+.ldot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+
+/* canvas charts */
+canvas{display:block}
+
+/* yoy bars */
+.yoy-list{display:flex;flex-direction:column;gap:8px;padding-top:2px}
+.yoy-row{display:flex;align-items:center;gap:8px}
+.yoy-name{font-size:11px;color:var(--text2);width:76px;flex-shrink:0;text-align:right}
+.yoy-track{flex:1;height:18px;position:relative}
+.yoy-zero{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--border2)}
+.yoy-bar{position:absolute;height:10px;border-radius:2px;top:50%;transform:translateY(-50%);transition:all .5s ease}
+.yoy-pct{font-size:11px;font-weight:600;width:50px;flex-shrink:0;text-align:right;transition:all .3s}
+
+/* table */
+.tabs{display:flex;gap:5px;margin-bottom:12px}
+.tab{font-size:11px;font-weight:500;padding:4px 12px;border-radius:7px;cursor:pointer;border:1px solid var(--border);color:var(--text2);background:transparent;font-family:var(--font)}
+.tab.active{background:rgba(59,110,245,.1);border-color:rgba(59,110,245,.35);color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{font-size:10px;font-weight:600;color:var(--text3);text-align:right;padding:7px 10px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.03em}
+thead th:first-child{text-align:left}
+tbody td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--border);color:var(--text);transition:all .3s}
+tbody td:first-child{text-align:left;font-weight:500}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(0,0,0,.02)}
+.prog-wrap{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+.prog-track{width:48px;height:3px;border-radius:2px;background:var(--bg4);overflow:hidden;flex-shrink:0}
+.prog-fill{height:100%;border-radius:2px;transition:width .4s}
+.prog-lbl{font-size:11px;font-weight:600;min-width:30px;text-align:right;transition:all .3s}
+
+/* insight */
+.ins-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px}
+.ins-card{background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:16px 18px;display:flex;gap:12px}
+.i-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.i-icon.r{background:rgba(200,40,40,.1)}
+.i-icon.a{background:rgba(200,130,10,.1)}
+.i-icon.b{background:rgba(59,110,245,.1)}
+.i-icon.t{background:rgba(14,169,126,.1)}
+.i-title{font-size:12px;font-weight:600;margin-bottom:4px}
+.i-body{font-size:11px;color:var(--text2);line-height:1.6;transition:all .3s}
+.hi{color:#c0202f}.ok{color:#0a7a50}.wa{color:#9a6000}.inf{color:#2b55c9}
+
+/* donut */
+.donut-wrap{display:flex;align-items:center;gap:14px;margin-top:6px}
+.dl-list{flex:1;display:flex;flex-direction:column;gap:6px}
+.dl-row{display:flex;align-items:center;gap:5px;font-size:11px}
+.dl-dot{width:6px;height:6px;border-radius:2px;flex-shrink:0}
+.dl-name{color:var(--text2);flex:1}
+.dl-val{font-weight:600;min-width:30px;text-align:right}
+.dl-pct{color:var(--text3);min-width:24px;text-align:right}
+
+/* ch rows */
+.ch-row{display:flex;align-items:center;gap:7px;padding:7px 10px;background:var(--bg3);border-radius:7px;border:1px solid var(--border);margin-bottom:5px}
+.ch-row:last-child{margin-bottom:0}
+.ch-name{font-size:11px;color:var(--text2);flex:1}
+.ch-bar-wrap{width:70px;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;flex-shrink:0}
+.ch-bar-fill{height:100%;border-radius:2px}
+.ch-val{font-size:11px;font-weight:600;min-width:32px;text-align:right;flex-shrink:0}
+.ch-yoy{font-size:10px;font-weight:600;min-width:38px;text-align:right;flex-shrink:0}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">W</div>
+    <div><div class="logo-text">Weekly Board</div><div class="logo-sub">Sales Intelligence</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Overview</div>
+    <div class="nav-item active" data-sec="sec-summary"><div class="nav-dot" style="background:#4f80ff"></div>전사 요약</div>
+    <div class="nav-item" data-sec="sec-gp"><div class="nav-dot" style="background:#2ba84a"></div>GP 수익성</div>
+    <div class="nav-item" data-sec="sec-channel"><div class="nav-dot" style="background:#2dd4b0"></div>국내 실적</div>
+    <div class="nav-item" data-sec="sec-channel"><div class="nav-dot" style="background:#a78bfa"></div>해외 실적</div>
+    <div class="nav-label">브랜드</div>
+    <div class="nav-item" data-sec="sec-hero"><div class="nav-dot" style="background:#60a5fa"></div>Hero</div>
+    <div class="nav-item" data-sec="sec-champion"><div class="nav-dot" style="background:#fb923c"></div>Champion</div>
+    <div class="nav-item" data-sec="sec-other"><div class="nav-dot" style="background:#f5a623"></div>기타</div>
+    <div class="nav-label">분석</div>
+    <div class="nav-item" data-sec="sec-brand"><div class="nav-dot" style="background:#c0c7d8"></div>YoY 분석</div>
+    <div class="nav-item" data-sec="sec-gp-analysis"><div class="nav-dot" style="background:#2ba84a"></div>GP 심층 분석</div>
+    <div class="nav-item" data-sec="sec-insight"><div class="nav-dot" style="background:#c0c7d8"></div>계획 대비</div>
+  </nav>
+  <div class="sidebar-footer"><span class="pulse"></span>2026.04.03 기준 (4월 진행중)</div>
+</aside>
+
+<main class="main">
+  <div class="page-header">
+    <div>
+      <div class="page-title">주간 실적 대시보드</div>
+      <div class="page-sub">기준: 2026년 4월 3일 · 1~4월 누적 · 단위: 백만원</div>
+    </div>
+    <div class="header-right"><span class="badge-week">W14 · 4월 1주차</span></div>
+  </div>
+
+  <!-- 집계 기준 안내 -->
+  <div style="background:#f0f4ff;border:1px solid #c5d0f0;border-radius:8px;padding:8px 16px;margin-bottom:14px;font-size:11px;color:#3a4a7a;line-height:1.7">
+    <strong>📌 집계 기준</strong>
+    <span style="margin:0 8px;color:#a0aace">|</span> 매출: <strong>원화판매금액 (부가세 제외)</strong>
+    <span style="margin:0 8px;color:#a0aace">|</span> 날짜: <strong>실적일자 기준</strong>
+    <span style="margin:0 8px;color:#a0aace">|</span> 브랜드: <strong>기준정보 등록 품번</strong> (미등록 → 기타)
+    <span style="margin:0 8px;color:#a0aace">|</span> GP: <strong>매출 − 매출원가</strong> (전건 포함)
+  </div>
+
+  <div class="mar-banner">
+    <div style="font-size:15px">📅</div>
+    <div class="mar-banner-text"><strong>4월은 현재 진행 중 (3일 / 30일 경과 · 10%)</strong><br>4월 수치는 현재 집계 기준이며, 토글로 월말 예상치를 확인할 수 있습니다.</div>
+    <div style="display:flex;align-items:center">
+      <div class="mar-prog-track"><div class="mar-prog-fill"></div></div>
+      <span class="mar-prog-label">3/30일</span>
+    </div>
+  </div>
+
+  <div class="toggle-wrap">
+    <span class="toggle-lbl on" id="lblA">현재 실적</span>
+    <button class="toggle-btn" id="togBtn" onclick="toggleProj()"><div class="toggle-thumb"></div></button>
+    <span class="toggle-lbl" id="lblP">월말 예상치 반영</span>
+    <span class="proj-note" id="projNote">✦ 4월 예상</span>
+  </div>
+
+  <!-- KPIs - 매출 -->
+  <div class="kpi-grid">
+    <div class="kpi-card c1">
+      <div class="kpi-lbl">전사 누적 매출</div>
+      <div class="kpi-val"><span id="kv1">217.0</span><span class="kpi-unit">억</span></div>
+      <div class="kpi-foot"><span class="chip r" id="kc1">▼ 25.0%</span><span class="chip-lbl">YoY 누적</span><span class="proj-badge" id="pb1">✦ 예상</span></div>
+    </div>
+    <div class="kpi-card c2">
+      <div class="kpi-lbl">계획 달성률 (누적)</div>
+      <div class="kpi-val"><span id="kv2">80.5</span><span class="kpi-unit">%</span></div>
+      <div class="kpi-foot"><span class="chip a" id="kc2">△ 19.5%p 미달</span><span class="chip-lbl">계획 260.6억</span><span class="proj-badge" id="pb2">✦ 예상</span></div>
+    </div>
+    <div class="kpi-card c3">
+      <div class="kpi-lbl">4월 매출</div>
+      <div class="kpi-val"><span id="kv3">67.3</span><span class="kpi-unit">억</span></div>
+      <div class="kpi-foot"><span class="chip r" id="kc3">▼ 35.9%</span><span class="chip-lbl" id="kl3">YoY (현재)</span><span class="proj-badge" id="pb3">✦ 예상</span></div>
+    </div>
+    <div class="kpi-card c4">
+      <div class="kpi-lbl">4월 계획 달성률</div>
+      <div class="kpi-val"><span id="kv4">76.5</span><span class="kpi-unit">%</span></div>
+      <div class="kpi-foot"><span class="chip a" id="kc4">계획 87.9억</span><span class="chip-lbl" id="kl4">4월 현재</span><span class="proj-badge" id="pb4">✦ 예상</span></div>
+    </div>
+  </div>
+
+  <div id="sec-gp" style="scroll-margin-top:72px"></div>
+  <!-- KPIs - GP -->
+  <div class="kpi-grid" style="margin-top:10px">
+    <div class="kpi-card" style="border-top:2px solid #2ba84a">
+      <div class="kpi-lbl" style="color:#2ba84a;font-weight:600">누적 GP</div>
+      <div class="kpi-val" style="font-size:24px"><span id="kv_gp_acc">141.7</span><span class="kpi-unit">억</span></div>
+      <div class="kpi-foot"><span id="chip_gp_acc" class="chip r">▼ 15.2%</span><span class="chip-lbl">YoY (25년 167.1억)</span></div>
+    </div>
+    <div class="kpi-card" style="border-top:2px solid #2ba84a">
+      <div class="kpi-lbl" style="color:#2ba84a;font-weight:600">누적 GPM</div>
+      <div class="kpi-val" style="font-size:24px"><span id="kv_gpm_acc">60.4</span><span class="kpi-unit">%</span></div>
+      <div class="kpi-foot"><span id="chip_gpm_acc" class="chip g">▲ +0.7%p</span><span class="chip-lbl">YoY (25년 59.7%)</span></div>
+    </div>
+    <div class="kpi-card" style="border-top:2px solid #2ba84a">
+      <div class="kpi-lbl" style="color:#2ba84a;font-weight:600">4월 GP</div>
+      <div class="kpi-val" style="font-size:24px"><span id="kv_gp3">5.5</span><span class="kpi-unit">억</span></div>
+      <div class="kpi-foot"><span id="chip_gp3" class="chip r">▼ 88.9%</span><span class="chip-lbl" id="kl_gp3">YoY (4월 현재)</span><span class="proj-badge" id="pb_gp3">✦ 예상</span></div>
+    </div>
+    <div class="kpi-card" style="border-top:2px solid #2ba84a">
+      <div class="kpi-lbl" style="color:#2ba84a;font-weight:600">4월 GPM</div>
+      <div class="kpi-val" style="font-size:24px"><span id="kv_gpm3">50.7</span><span class="kpi-unit">%</span></div>
+      <div class="kpi-foot"><span id="chip_gpm3" class="chip r">▼ -5.1%p</span><span class="chip-lbl">YoY (25년 55.8%)</span></div>
+    </div>
+  </div>
+
+  <!-- 전사 추이 -->
+  <div class="sec" id="sec-summary">전사 매출 추이</div>
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">월별 매출 추이 — 전사</div>
+      <div class="card-sub" id="trendSub">25년 실적 vs 26년 실적 (현재) vs 사업계획</div>
+      <div class="leg">
+        <span class="leg-item"><span class="ldot" style="background:rgba(59,110,245,.25)"></span>25년 실적</span>
+        <span class="leg-item"><span class="ldot" style="background:#4f80ff"></span>26년 실적</span>
+        <span class="leg-item" id="legProj" style="display:none"><span class="ldot" style="background:rgba(245,166,35,.7)"></span>4월 예상 추가분</span>
+        <span class="leg-item"><span class="ldot" style="background:#2dd4b0"></span>사업계획</span>
+      </div>
+      <canvas id="cTrend" height="220"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">채널 · 브랜드 YoY 변동률</div>
+      <div class="card-sub" id="yoySub">4월 현재(3일) 기준 (%)</div>
+      <div class="yoy-list" id="yoyList"></div>
+    </div>
+  </div>
+
+  <div id="sec-channel" style="scroll-margin-top:72px"></div>
+  <!-- 브랜드 & 채널 -->
+  <div class="sec" id="sec-brand">브랜드 & 채널 현황 <span style="font-size:10px;color:var(--text3);font-weight:400;letter-spacing:0">— 다이소는 별도 세그먼트로 분리</span></div>
+
+  <!-- 4개 세그먼트 KPI -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px" id="segKpis"></div>
+
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">브랜드별 실적 현황</div>
+      <div class="card-sub">1~4월 누적 · 라인·채널 계층 구조 (4월은 3일 현재)</div>
+      <table id="hierTable">
+        <thead>
+          <tr>
+            <th style="text-align:left;min-width:140px">브랜드 / 제품</th>
+            <th style="text-align:right;min-width:60px">26년</th>
+            <th style="text-align:right;min-width:60px;color:var(--text3)">25년</th>
+            <th style="text-align:right;min-width:70px">YoY</th>
+            <th style="text-align:right;min-width:100px">비중</th>
+          </tr>
+        </thead>
+        <tbody id="hierBody"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">국내 vs 해외 월별 비교</div>
+      <div class="card-sub">채널별 1~4월 실적 추이 (국내 · 해외)</div>
+      <div class="leg">
+        <span class="leg-item"><span class="ldot" style="background:rgba(14,169,126,.25)"></span>국내 25년</span>
+        <span class="leg-item"><span class="ldot" style="background:#2dd4b0"></span>국내 26년</span>
+        <span class="leg-item"><span class="ldot" style="background:rgba(124,92,232,.25)"></span>해외 25년</span>
+        <span class="leg-item"><span class="ldot" style="background:#a78bfa"></span>해외 26년</span>
+      </div>
+      <canvas id="cChannel" height="210"></canvas>
+    </div>
+  </div>
+
+  <!-- ══════════ 히어로 심층 분석 ══════════ -->
+  <div class="sec" id="sec-hero">Hero 브랜드 심층 분석</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+    <div class="card" style="padding:16px 18px">
+      <div class="kpi-lbl">Hero 누적 매출</div>
+      <div style="font-size:22px;font-weight:700;margin:6px 0">7,321<span style="font-size:13px;font-weight:400;color:var(--text2);margin-left:2px">백만</span></div>
+      <div class="kpi-foot"><span class="chip r">▼ 3.3%</span><span class="chip-lbl">YoY (25년 7,568)</span></div>
+    </div>
+    <div class="card" style="padding:16px 18px">
+      <div class="kpi-lbl">SKU 현황 (Hero)</div>
+      <div style="font-size:22px;font-weight:700;margin:6px 0">46<span style="font-size:13px;font-weight:400;color:var(--text2);margin-left:2px">공통</span></div>
+      <div class="kpi-foot"><span class="chip g">+42 신규</span><span class="chip r" style="margin-left:4px">−12 소멸</span></div>
+    </div>
+    <div class="card" style="padding:16px 18px">
+      <div class="kpi-lbl">신규 SKU 기여 / 소멸 손실</div>
+      <div style="font-size:22px;font-weight:700;margin:6px 0;color:#1a8040">+2,390<span style="font-size:13px;font-weight:400;color:var(--text2);margin-left:2px">백만</span></div>
+      <div class="kpi-foot"><span class="chip r">소멸 −329백만</span><span class="chip-lbl">공통하락 −2,307</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div class="card-title">Hero 브랜드 상세 분석</div>
+        <div class="card-sub" style="margin-bottom:0">채널 관점과 SKU 관점 전환</div>
+      </div>
+      <div class="tabs" style="margin-bottom:0" id="heroTabs">
+        <button class="tab active" data-v="ch">📦 채널 관점</button>
+        <button class="tab" data-v="sku">🔬 SKU 관점</button>
+      </div>
+    </div>
+
+    <div id="heroViewCh">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">채널별 YoY 비교 (26년 vs 25년, 백만원)</div>
+          <canvas id="cHeroChYoy" height="200"></canvas>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">유통채널 구성비 (26년 1~4월)</div>
+          <div class="donut-wrap">
+            <canvas id="cHeroDonut" width="100" height="100" style="flex-shrink:0"></canvas>
+            <div class="dl-list" id="heroDonutLegend"></div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">채널별 실적 상세 및 주력 SKU</div>
+      <div id="heroChDetail"></div>
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin:14px 0 10px">채널 × 카테고리 매출 구성 (백만원)</div>
+      <div id="heroChCatMatrix"></div>
+    </div>
+
+    <div id="heroViewSku" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">SKU 증감 구조 (백만원)</div>
+          <canvas id="cHeroWaterfall" height="200"></canvas>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">제품 카테고리 구성 (26년 1~4월)</div>
+          <canvas id="cHeroCat" height="200"></canvas>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">🔺 신규 진입 SKU TOP8 (26년)</div>
+          <div id="heroSkuNew"></div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">🔻 소멸 SKU TOP8 (25년→단절)</div>
+          <div id="heroSkuLost"></div>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">공통 SKU TOP10 — YoY 성과</div>
+        <table><thead><tr>
+          <th style="text-align:left">품명</th><th>26년</th><th>25년</th><th>YoY</th><th>증감</th>
+        </tr></thead><tbody id="heroSkuCommon"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ 챔피언 심층 분석 ══════════ -->
+  <div class="sec" id="sec-champion">Champion 브랜드 심층 분석 <span style="font-size:10px;color:var(--text3);font-weight:400;letter-spacing:0">— 다이소 별도 관리</span></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+    <div class="card" style="padding:16px 18px">
+      <div class="kpi-lbl">Champion 누적 매출 (非다이소)</div>
+      <div style="font-size:22px;font-weight:700;margin:6px 0">7,571<span style="font-size:13px;font-weight:400;color:var(--text2);margin-left:2px">백만</span></div>
+      <div class="kpi-foot"><span class="chip r">▼ 23.3%</span><span class="chip-lbl">YoY (25년 9,875)</span></div>
+    </div>
+    <div class="card" style="padding:16px 18px">
+      <div class="kpi-lbl">SKU 현황 (Champion)</div>
+      <div style="font-size:22px;font-weight:700;margin:6px 0">60<span style="font-size:13px;font-weight:400;color:var(--text2);margin-left:2px">공통</span></div>
+      <div class="kpi-foot"><span class="chip g">+57 신규</span><span class="chip r" style="margin-left:4px">−45 소멸</span></div>
+    </div>
+    <div class="card" style="padding:16px 18px">
+      <div class="kpi-lbl">신규 SKU 기여 / 소멸 손실</div>
+      <div style="font-size:22px;font-weight:700;margin:6px 0;color:#1a8040">+4,790<span style="font-size:13px;font-weight:400;color:var(--text2);margin-left:2px">백만</span></div>
+      <div class="kpi-foot"><span class="chip r">소멸 −649백만</span><span class="chip-lbl">공통하락 −6,445</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div class="card-title">Champion 브랜드 상세 분석</div>
+        <div class="card-sub" style="margin-bottom:0">채널 관점과 SKU 관점 전환</div>
+      </div>
+      <div class="tabs" style="margin-bottom:0" id="champTabs">
+        <button class="tab active" data-v="ch">📦 채널 관점</button>
+        <button class="tab" data-v="sku">🔬 SKU 관점</button>
+      </div>
+    </div>
+
+    <div id="champViewCh">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">채널별 YoY 비교 (26년 vs 25년, 백만원)</div>
+          <canvas id="cChampChYoy" height="200"></canvas>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">유통채널 구성비 (26년 1~3월)</div>
+          <div class="donut-wrap">
+            <canvas id="cChampDonut" width="100" height="100" style="flex-shrink:0"></canvas>
+            <div class="dl-list" id="champDonutLegend"></div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">채널별 실적 상세 및 주력 SKU</div>
+      <div id="champChDetail"></div>
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin:14px 0 10px">채널 × 카테고리 매출 구성 (백만원)</div>
+      <div id="champChCatMatrix"></div>
+    </div>
+
+    <div id="champViewSku" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">SKU 증감 구조 (백만원)</div>
+          <canvas id="cChampWaterfall" height="200"></canvas>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">제품 카테고리 구성 (26년 1~3월)</div>
+          <canvas id="cChampCat" height="200"></canvas>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">🔺 신규 진입 SKU TOP8 (26년)</div>
+          <div id="champSkuNew"></div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">🔻 소멸 SKU TOP8 (25년→단절)</div>
+          <div id="champSkuLost"></div>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">공통 SKU TOP10 — YoY 성과</div>
+        <table><thead><tr>
+          <th style="text-align:left">품명</th><th>26년</th><th>25년</th><th>YoY</th><th>증감</th>
+        </tr></thead><tbody id="champSkuCommon"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 기타 심층 -->
+  <div class="sec" id="sec-other">기타 브랜드 심층 분석 <span style="font-size:10px;color:var(--text3);font-weight:400;letter-spacing:0">— 다이소 채널 제외 (다이소는 Champion 하위로 별도 관리)</span></div>
+
+  <!-- 상단 요약 KPI 3종 -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+    <div class="card" style="padding:16px 18px">
+      <div class="kpi-lbl">기타 누적 매출 (非다이소)</div>
+      <div style="font-size:22px;font-weight:700;margin:6px 0">6,671<span style="font-size:13px;font-weight:400;color:var(--text2);margin-left:2px">백만</span></div>
+      <div class="kpi-foot"><span class="chip r">▼ 54.2%</span><span class="chip-lbl">YoY (25년 14,575)</span></div>
+    </div>
+    <div class="card" style="padding:16px 18px">
+      <div class="kpi-lbl">SKU 현황 (非다이소)</div>
+      <div style="font-size:22px;font-weight:700;margin:6px 0">239<span style="font-size:13px;font-weight:400;color:var(--text2);margin-left:2px">공통</span></div>
+      <div class="kpi-foot"><span class="chip g">+211 신규</span><span class="chip r" style="margin-left:4px">−199 소멸</span></div>
+    </div>
+    <div class="card" style="padding:16px 18px">
+      <div class="kpi-lbl">소멸 SKU 손실 / 신규 SKU 기여</div>
+      <div style="font-size:22px;font-weight:700;margin:6px 0">▼2,431<span style="font-size:13px;font-weight:400;color:var(--text2);margin-left:2px">백만</span></div>
+      <div class="kpi-foot"><span class="chip g">신규 +1,039백만</span><span class="chip-lbl">공통하락 −5,350</span></div>
+    </div>
+  </div>
+
+  <!-- 채널/SKU 탭 -->
+  <div class="card" style="margin-bottom:18px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div class="card-title">기타 브랜드 상세 분석</div>
+        <div class="card-sub" style="margin-bottom:0">채널 관점과 SKU 관점을 전환하여 확인</div>
+      </div>
+      <div class="tabs" style="margin-bottom:0" id="otherTabs">
+        <button class="tab active" data-v="ch">📦 채널 관점</button>
+        <button class="tab" data-v="sku">🔬 SKU 관점</button>
+      </div>
+    </div>
+
+    <!-- ── 채널 관점 ── -->
+    <div id="viewCh">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">채널별 YoY 비교 (26년 vs 25년, 백만원)</div>
+          <canvas id="cChYoy" height="200"></canvas>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">유통채널 구성비 (26년 1~3월)</div>
+          <div class="donut-wrap">
+            <canvas id="cDonut" width="100" height="100" style="flex-shrink:0"></canvas>
+            <div class="dl-list" id="dlList"></div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">채널별 실적 상세 및 주력 카테고리</div>
+      <div id="chDetail"></div>
+      <!-- 채널 x 카테고리 히트맵 -->
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin:14px 0 10px">채널 × 카테고리 매출 구성 (백만원)</div>
+      <div id="chCatMatrix"></div>
+    </div>
+
+    <!-- ── SKU 관점 ── -->
+    <div id="viewSku" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">SKU 증감 구조 (소멸 vs 신규, 백만원)</div>
+          <canvas id="cSkuWaterfall" height="200"></canvas>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">제품 카테고리 구성 (26년 1~3월)</div>
+          <canvas id="cCat" height="200"></canvas>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">🔺 신규 진입 SKU TOP10 (26년)</div>
+          <div id="skuNew"></div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">🔻 소멸 SKU TOP10 (25년→단절)</div>
+          <div id="skuLost"></div>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">공통 SKU TOP15 — YoY 성과</div>
+        <table id="skuCommon">
+          <thead><tr>
+            <th style="text-align:left">품명</th>
+            <th>26년</th><th>25년</th><th>YoY</th><th>증감액</th>
+          </tr></thead>
+          <tbody id="skuCommonBody"></tbody>
+        </table>
+      </div>
+
+      <!-- GP 기준 SKU 분석 -->
+      <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px">💰 GP 기준 SKU 분석</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:14px">기타(非다이소) · 26년 1~3월 누적</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#2ba84a;margin-bottom:8px">GP 금액 기준 TOP10</div>
+            <table>
+              <thead><tr>
+                <th style="text-align:left">품명</th><th>GP</th><th>GPM</th><th>매출</th><th>YoY GP</th>
+              </tr></thead>
+              <tbody id="gpTopBody"></tbody>
+            </table>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#2ba84a;margin-bottom:8px">신규 SKU GP 기준 TOP8</div>
+            <div id="gpNewSkuList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 시사점 -->
+  <div class="sec" id="sec-insight">주요 시사점</div>
+  <div class="ins-grid">
+    <div class="ins-card"><div class="i-icon r">🔴</div><div>
+      <div class="i-title">전반적 매출 하락세</div>
+      <div class="i-body" id="ins1">1~3월 누적 234.7억 (마감). 4월 3일 현재 10.8억 (경과율 10%). 월말 예상 108.4억, 예상YoY <strong class="ok">▲+21.9%</strong>.</div>
+    </div></div>
+    <div class="ins-card"><div class="i-icon r">⚠️</div><div>
+      <div class="i-title">4월 현재(10%) 수치 참고</div>
+      <div class="i-body" id="ins2">4월 3일(10%) 집계 중. 4월 현재 YoY <strong class="hi">-87.8%</strong>. 월말 예상 YoY <strong class="ok">+21.9%</strong> (예상 108.4억).</div>
+    </div></div>
+    <div class="ins-card"><div class="i-icon a">📉</div><div>
+      <div class="i-title">Champion 브랜드 부진</div>
+      <div class="i-body">4월 현재 Champion 非다이소 86백만 (25년 1,772백만). 월말 예상 860백만 / 25년 대비 <strong class="hi">▼51.5%</strong>.</div>
+    </div></div>
+    <div class="ins-card"><div class="i-icon a">🔶</div><div>
+      <div class="i-title">기타 — 해외채널 급감 주도</div>
+      <div class="i-body">4월 현재 기타 361백만. CIS권 115백만, 중국권 161백만. 월말 예상 3,610백만 / 예상YoY <strong class="hi">▼4.2%</strong>.</div>
+    </div></div>
+    <div class="ins-card"><div class="i-icon t">✅</div><div>
+      <div class="i-title">Hero · 내수채널 성장세</div>
+      <div class="i-body" id="ins5">Hero 4월 현재 398백만. 월말 예상 3,980백만 / 25년 2,259백만 → 예상YoY <strong class="ok">▲+76.2%</strong>.</div>
+    </div></div>
+    <div class="ins-card"><div class="i-icon b">💡</div><div>
+      <div class="i-title">기타 기초케어 의존 고착</div>
+      <div class="i-body">4월 3일 전사 GP 550백만, GPM 50.7%. 월말 예상 GP 5,498백만. 25년 4,962백만 대비 예상 <strong class="ok">▲+10.8%</strong>.</div>
+    </div></div>
+  </div>
+
+  <!-- GP 심층 분석 -->
+  <div class="sec" id="sec-gp-analysis">GP 심층 분석 — 제품별 수익성 변화</div>
+
+  <!-- GP 폭포 + 브랜드별 GPM 추이 -->
+  <div class="row2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-title">GP 증감 구조 분석</div>
+      <div class="card-sub">25년 대비 26년 GP 변화 요인 분해 (백만원)</div>
+      <canvas id="cGPWaterfall" height="210"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">브랜드별 GPM 월별 추이</div>
+      <div class="card-sub">26년 vs 25년 GPM (%) — 선: 26년 / 점선: 25년</div>
+      <canvas id="cGPMTrend" height="210"></canvas>
+    </div>
+  </div>
+
+  <!-- 채널 × GP + 카테고리 GP -->
+  <div class="row2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-title">채널별 GP · GPM 비교</div>
+      <div class="card-sub">26년 누적 기준 · 상위 8개 채널</div>
+      <table><thead><tr>
+        <th style="text-align:left">채널</th><th>GP(백만)</th><th>GPM</th><th>25년 GPM</th><th>GPM 변화</th><th>GP 증감</th>
+      </tr></thead><tbody id="gpChannelBody"></tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-title">제품 카테고리별 GP · GPM</div>
+      <div class="card-sub">26년 누적 기준 · 주요 카테고리</div>
+      <table><thead><tr>
+        <th style="text-align:left">카테고리</th><th>GP(백만)</th><th>GPM</th><th>25년 GPM</th><th>GPM 변화</th>
+      </tr></thead><tbody id="gpCatBody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- SKU GPM 변화 -->
+  <div class="row2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-title">🔻 GPM 하락 SKU TOP10</div>
+      <div class="card-sub">공통 SKU · 매출 30백만 이상 · YoY GPM 하락폭 기준</div>
+      <table><thead><tr>
+        <th style="text-align:left">품명</th><th>브랜드</th><th>GPM 변화</th><th>26년 GPM</th><th>GP(백만)</th>
+      </tr></thead><tbody id="gpSkuDropBody"></tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-title">🔺 GPM 개선 SKU TOP10</div>
+      <div class="card-sub">공통 SKU · 매출 30백만 이상 · YoY GPM 상승폭 기준</div>
+      <table><thead><tr>
+        <th style="text-align:left">품명</th><th>브랜드</th><th>GPM 변화</th><th>26년 GPM</th><th>GP(백만)</th>
+      </tr></thead><tbody id="gpSkuRiseBody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- GP 시사점 -->
+  <div class="ins-grid" style="margin-bottom:18px">
+    <div class="ins-card"><div class="i-icon r">📉</div><div>
+      <div class="i-title">GP 절대금액 ▼15.2% — 원가유효 기준</div>
+      <div class="i-body">누적 GP 141.7억 (25년 167.1억). <strong class="hi">공통 SKU GP 하락 −63.1억</strong>이 주원인. 소멸 −22.8억, 신규 +60.5억으로 일부 상쇄.</div>
+    </div></div>
+    <div class="ins-card"><div class="i-icon a">✨</div><div>
+      <div class="i-title">GPM ▲+0.7%p 개선 (59.7%→60.4%)</div>
+      <div class="i-body">다이소 GPM <strong class="ok">+10.3%p</strong> (29.6%→39.9%), 공구 <strong class="ok">+9.0%p</strong>, 올리브영 <strong class="ok">+3.3%p</strong> 개선. CIS권 GPM +0.4%p 상승.</div>
+    </div></div>
+    <div class="ins-card"><div class="i-icon r">⚠️</div><div>
+      <div class="i-title">동남아권·홈쇼핑 GPM 하락 주목</div>
+      <div class="i-body">동남아권 GPM <strong class="hi">▼10.8%p</strong> (69.6%→58.8%), 일본권 <strong class="hi">▼10.0%p</strong>. 자사몰 GPM <strong class="hi">▼24.6%p</strong> — 믹스 변화 점검 필요.</div>
+    </div></div>
+    <div class="ins-card"><div class="i-icon t">💡</div><div>
+      <div class="i-title">GPM 개선 주도 — 시카놀·기획세트·다이소 신규</div>
+      <div class="i-body">시카놀앰플마스크 GPM <strong class="ok">+58~63%p</strong> 급등, 엑스트라슈퍼9 올영 기획세트 <strong class="ok">+34%p</strong>. 고마진 신규 SKU 확대 전략 유효.</div>
+    </div></div>
+  </div>
+</main>
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   순수 Canvas API 차트 (외부 라이브러리 없음)
+   ════════════════════════════════════════════ */
+
+const RATIO = 3/30;
+const mar4A = 1084, mar4P = Math.round(1084/RATIO), mar4_25 = 8894;
+const acc123 = 23469, acc25_3 = 27969;
+const acc25_4 = 36863;
+const plan_cum = 36148, plan_4 = 10084, plan_cum3 = 26064;
+const plan_3 = 8794;  // 3월 계획 (참고용)
+
+let isProj = false;
+let currentFilter = 'all';
+
+/* ── 공통 유틸 ── */
+function px(canvas) { return window.devicePixelRatio || 1; }
+
+function setupCanvas(id) {
+  const canvas = document.getElementById(id);
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const w = canvas.offsetWidth || canvas.parentElement.clientWidth || 400;
+  const h = canvas.height;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return { ctx, w, h };
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  if (w < 0) return;
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+  ctx.fill();
+}
+
+/* ── 그룹 바 차트 ── */
+function drawGroupedBar(id, labels, datasets, opts = {}) {
+  const { ctx, w, h } = setupCanvas(id);
+  const pad = { t: 16, r: 16, b: 36, l: opts.leftPad || 44 };
+  const cw = w - pad.l - pad.r;
+  const ch = h - pad.t - pad.b;
+
+  // max value — 25년 배경 막대(첫 번째 bar dataset) 제외하고 스케일 계산
+  const scalingDatasets = datasets.filter((d, i) => !(d.type !== 'line' && i === 0));
+  const allVals = scalingDatasets.flatMap(d => d.data.filter(v => v != null && !isNaN(v)));
+  const maxV = Math.max(...allVals) * 1.15;
+
+  // grid
+  const gridLines = 4;
+  ctx.font = '10px ' + getComputedStyle(document.body).fontFamily;
+  ctx.fillStyle = '#9099b5';
+  ctx.textAlign = 'right';
+  for (let i = 0; i <= gridLines; i++) {
+    const v = maxV * i / gridLines;
+    const y = pad.t + ch - (ch * i / gridLines);
+    ctx.globalAlpha = 0.5;
+    ctx.strokeStyle = 'rgba(0,0,0,0.07)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cw, y); ctx.stroke();
+    ctx.globalAlpha = 1;
+    const lbl = opts.yFmt ? opts.yFmt(v) : (v/1000).toFixed(1)+'B';
+    ctx.fillText(lbl, pad.l - 4, y + 4);
+  }
+
+  // bars
+  const groupW = cw / labels.length;
+  const barDatasets = datasets.filter(d => d.type !== 'line');
+  const lineDatasets = datasets.filter(d => d.type === 'line');
+  const barCount = barDatasets.length;
+  const totalBarW = groupW * 0.78;
+  const barW = totalBarW / barCount;
+  const barGap = groupW * 0.22 / 2;
+
+  barDatasets.forEach((ds, di) => {
+    ds.data.forEach((v, i) => {
+      if (v == null || isNaN(v) || v === 0) return;
+      const x = pad.l + i * groupW + barGap + di * barW;
+      const clampedV = Math.min(v, maxV);
+      const barH = Math.max(2, ch * clampedV / maxV);
+      const y = pad.t + ch - barH;
+      ctx.fillStyle = ds.color;
+      roundRect(ctx, x, y, barW - 1, barH, 3);
+    });
+  });
+
+  // line datasets
+  lineDatasets.forEach(ds => {
+    ctx.strokeStyle = ds.color;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    let started = false;
+    ds.data.forEach((v, i) => {
+      if (v == null) return;
+      const x = pad.l + i * groupW + groupW / 2;
+      const y = pad.t + ch - ch * v / maxV;
+      if (!started) { ctx.moveTo(x, y); started = true; } else ctx.lineTo(x, y);
+      ctx.fillStyle = ds.color;
+      ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      ds.data.forEach((v2, j) => {
+        if (v2 == null) return;
+        const x2 = pad.l + j * groupW + groupW / 2;
+        const y2 = pad.t + ch - ch * v2 / maxV;
+        if (j === 0) ctx.moveTo(x2, y2); else ctx.lineTo(x2, y2);
+      });
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
+  });
+
+  // x labels
+  ctx.fillStyle = '#9099b5';
+  ctx.textAlign = 'center';
+  ctx.font = '11px ' + getComputedStyle(document.body).fontFamily;
+  labels.forEach((l, i) => {
+    ctx.fillText(l, pad.l + i * groupW + groupW / 2, h - 8);
+  });
+}
+
+/* ── 수평 바 차트 ── */
+function drawHBar(id, labels, data, colors) {
+  const { ctx, w, h } = setupCanvas(id);
+  // 레이블 최대 너비 측정 후 동적 패딩
+  ctx.font = '11px ' + getComputedStyle(document.body).fontFamily;
+  const maxLabelW = Math.max(...labels.map(l => ctx.measureText(l).width));
+  const pad = { t: 8, r: 54, b: 8, l: Math.ceil(maxLabelW) + 12 };
+  const cw = w - pad.l - pad.r;
+  const ch = h - pad.t - pad.b;
+  const maxV = Math.max(...data) * 1.1;
+  const rowH = ch / labels.length;
+
+  labels.forEach((l, i) => {
+    const y = pad.t + i * rowH;
+    const barH = rowH * 0.5;
+    const barY = y + (rowH - barH) / 2;
+    const barW = cw * data[i] / maxV;
+
+    ctx.fillStyle = colors[i] || '#4f80ff';
+    ctx.globalAlpha = 0.85;
+    roundRect(ctx, pad.l, barY, barW, barH, 3);
+    ctx.globalAlpha = 1;
+
+    ctx.fillStyle = '#6b7491';
+    ctx.font = '11px ' + getComputedStyle(document.body).fontFamily;
+    ctx.textAlign = 'right';
+    ctx.fillText(l, pad.l - 6, y + rowH / 2 + 4);
+
+    ctx.fillStyle = '#1a2035';
+    ctx.textAlign = 'left';
+    ctx.font = '11px ' + getComputedStyle(document.body).fontFamily;
+    ctx.fillText(data[i].toLocaleString(), pad.l + barW + 5, y + rowH / 2 + 4);
+  });
+}
+
+/* ── 도넛 차트 ── */
+function drawDonut(id, data, colors) {
+  const canvas = document.getElementById(id);
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = 110 * dpr;
+  canvas.height = 110 * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const cx = 55, cy = 55, r = 46, ri = 30;
+  const total = data.reduce((a, b) => a + b, 0);
+  let start = -Math.PI / 2;
+  data.forEach((v, i) => {
+    const angle = (v / total) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, start + angle);
+    ctx.closePath();
+    ctx.fillStyle = colors[i];
+    ctx.fill();
+    start += angle;
+  });
+  // hole
+  ctx.beginPath();
+  ctx.arc(cx, cy, ri, 0, Math.PI * 2);
+  ctx.fillStyle = '#ffffff';
+  ctx.fill();
+  // center text
+  const pct = Math.round(data[0] / total * 100);
+  ctx.fillStyle = '#1a2035';
+  ctx.font = 'bold 15px ' + getComputedStyle(document.body).fontFamily;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(pct + '%', cx, cy);
+}
+
+/* ── 전사 추이 차트 ── */
+function drawTrend() {
+  const m3val = isProj ? mar4P : mar4A;
+  const extra = isProj ? mar4P - mar4A : 0;
+  drawGroupedBar('cTrend',
+    ['1월', '2월', '3월', '4월'],
+    [
+      { data: [7219, 11389, 9361, 8894], color: 'rgba(59,110,245,0.18)' },
+      { data: [7156, 7812, 8501, mar4A], color: 'rgba(59,110,245,0.85)' },
+      { data: [null, null, extra > 0 ? extra : null], color: 'rgba(200,130,10,0.7)' },
+      { type: 'line', data: [9105, 8166, 8794], color: '#2dd4b0' },
+    ],
+    { yFmt: v => (v / 1000).toFixed(0) + 'B' }
+  );
+}
+
+/* ── 채널 비교 차트 ── */
+function drawChannel() {
+  drawGroupedBar('cChannel',
+    ['1월', '2월', '3월', '4월'],
+    [
+      { data: [2217, 5746, 3169, 2751], color: 'rgba(14,169,126,0.18)' },
+      { data: [3062, 3818, 2379, 307],  color: 'rgba(14,169,126,0.85)' },
+      { data: [5002, 5642, 6192, 6143], color: 'rgba(124,92,232,0.18)' },
+      { data: [4094, 3994, 6122, 777],  color: 'rgba(124,92,232,0.85)' },
+    ],
+    { yFmt: v => (v / 1000).toFixed(1) + 'B' }
+  );
+}
+
+/* ── 기타 추이 ── */
+function drawOtherTrend() {
+  drawGroupedBar('cOther',
+    ['1월', '2월', '3월', '4월'],
+    [
+      { data: [3729, 4647, 4458], color: 'rgba(200,130,10,0.18)' },
+      { data: [2306, 2405, 2256], color: 'rgba(200,130,10,0.85)' },
+    ],
+    { yFmt: v => (v / 1000).toFixed(1) + 'B' }
+  );
+}
+
+/* ── 카테고리 수평 바 ── */
+function drawCat() {
+  drawHBar('cCat',
+    ['기초케어', '마스크팩', '클렌징', '선케어', '생활케어', '잡화외'],
+    [3942, 1665, 948, 243, 83, 83],
+    ['#4f80ff', '#2dd4b0', '#a78bfa', '#fb923c', '#f5a623', '#9099b5']
+  );
+}
+
+/* ── 채널 YoY 바 ── */
+function drawChYoy() {
+  const labels = ['CIS권','다이소','동남아권','중국권','올리브영','자사몰','동유럽권','일본권'];
+  const d25 = [3822, 2027, 1057, 2394, 238, 104, 681, 71];
+  const d26 = [2499, 1559, 475, 465, 381, 289, 187, 163];
+  drawGroupedBar('cChYoy', labels,
+    [
+      { data: d25, color: 'rgba(160,168,190,0.4)' },
+      { data: d26, color: 'rgba(200,40,40,0.7)' },
+    ],
+    { yFmt: v => v.toLocaleString(), leftPad: 60 }
+  );
+  // 성장 채널 재색칠
+  const { ctx, w, h } = setupCanvas('cChYoy');
+  /* handled by bar color mapping below */
+}
+
+function drawChYoyColored() {
+  const canvas = document.getElementById('cChYoy');
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.offsetWidth || canvas.parentElement.clientWidth || 400;
+  const h = 210;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const labels = ['CIS권','동남아권','중국권','올리브영','자사몰','중동권','동유럽권','기타유럽권'];
+  const d25 = [3822, 1057, 2394, 478, 104, 14, 681, 209];
+  const d26 = [2800, 483,  467,  381, 289, 209, 187, 166];
+  const pad = { t:16, r:16, b:64, l:60 };
+  const cw = w - pad.l - pad.r;
+  const ch = h - pad.t - pad.b;
+  const maxV = Math.max(...d25, ...d26) * 1.12;
+  const gridLines = 4;
+
+  ctx.font = '10px ' + getComputedStyle(document.body).fontFamily;
+  ctx.fillStyle = '#9099b5';
+  ctx.textAlign = 'right';
+  for (let i = 0; i <= gridLines; i++) {
+    const v = maxV * i / gridLines;
+    const y = pad.t + ch - ch * i / gridLines;
+    ctx.globalAlpha = 0.5;
+    ctx.strokeStyle = 'rgba(0,0,0,0.07)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cw, y); ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.fillText(v.toLocaleString(), pad.l - 4, y + 4);
+  }
+
+  const groupW = cw / labels.length;
+  const bw = groupW * 0.35;
+  labels.forEach((l, i) => {
+    const gx = pad.l + i * groupW;
+    // 25년
+    const h25 = ch * d25[i] / maxV;
+    ctx.fillStyle = 'rgba(160,168,190,0.4)';
+    roundRect(ctx, gx + groupW*0.08, pad.t + ch - h25, bw, h25, 3);
+    // 26년
+    const h26 = ch * d26[i] / maxV;
+    ctx.fillStyle = d26[i] >= d25[i] ? 'rgba(26,128,64,0.75)' : 'rgba(200,40,40,0.75)';
+    roundRect(ctx, gx + groupW*0.08 + bw + 2, pad.t + ch - h26, bw, h26, 3);
+    // x label — 45도 회전
+    ctx.save();
+    ctx.fillStyle = '#9099b5';
+    ctx.font = '10px ' + getComputedStyle(document.body).fontFamily;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.translate(gx + groupW / 2, pad.t + ch + 10);
+    ctx.rotate(-Math.PI / 4);
+    ctx.fillText(l, 0, 0);
+    ctx.restore();
+  });
+}
+
+/* ════════════════════════════════
+   기타 분석 데이터
+   ════════════════════════════════ */
+
+/* 도넛 */
+const dnLabels = ['CIS권','기타채널','자사몰','동남아권','중국권','올리브영','동유럽권','기타'];
+const dnData   = [2800, 483, 467, 381, 289, 209, 187, 950];
+const dnColors = ['#3b6ef5','#7c5ce8','#fb923c','#f05050','#d98b10','#e8650a','#0ea97e','#9099b5'];
+const dnTotal  = dnData.reduce((a,b)=>a+b,0);
+
+function buildDonutLegend() {
+  const el = document.getElementById('dlList');
+  el.innerHTML = '';
+  dnLabels.forEach((l,i) => {
+    el.innerHTML += `<div class="dl-row">
+      <div class="dl-dot" style="background:${dnColors[i]}"></div>
+      <span class="dl-name">${l}</span>
+      <span class="dl-val">${dnData[i].toLocaleString()}</span>
+      <span class="dl-pct">${(dnData[i]/dnTotal*100).toFixed(0)}%</span>
+    </div>`;
+  });
+}
+
+/* ── 채널 상세 (非다이소, 주력 SKU 포함) ── */
+const chRows = [
+  { n:'CIS권',    v26:2880, v25:3822, cat:'기초케어 81%',
+    topSku:['펩타이드톡스보르크림','펩타이드톡스보르멀티키트','셀톡싱더마쥬르크림','마이크로티파우더클렌저','알고톡스딥클리어'] },
+  { n:'동남아권', v26:525,  v25:1057, cat:'기초케어 65%',
+    topSku:['글루타치온화이트크림','비타민알엑스바디로션','콜라겐슈퍼10슬리핑크림','액티브실키선크림','골드에이지톡스H8크림'] },
+  { n:'중국권',   v26:543,  v25:2394, cat:'마스크팩·기초케어',
+    topSku:['시카놀앰플마스크(위생허가)','액티브실키선크림','시카놀앰플마스크(중문)','파워아쿠아크림','골드에이지톡스H8크림'] },
+  { n:'올리브영', v26:382,  v25:238,  cat:'기획세트 중심',
+    topSku:['엑스트라슈퍼9한정기획세트','히알루론산레이어물톡스세트','엑스트라슈퍼9액티브스틱','레드락토콜라겐핸드크림','레드락토UV핸드크림'] },
+  { n:'자사몰',   v26:295,  v25:104,  cat:'다품종 소량',
+    topSku:['셀톡싱에센셜세트','멜라노필톡스세트','레드락토콜라겐앰플','피토시카놀카밍마스크'] },
+  { n:'중동권',   v26:209,  v25:14,   cat:'기초케어 94%',
+    topSku:['기초케어 위주 신규 확대'] },
+  { n:'동유럽권', v26:255,  v25:681,  cat:'기초케어 81%',
+    topSku:['기초케어 위주 소량 다품종'] },
+  { n:'기타채널', v26:901,  v25:2501, cat:'기초케어·클렌징',
+    topSku:['일본권','북미권','기타유럽권 등 소량 다채널'] },
+];
+
+function buildChDetail() {
+  const maxV = Math.max(...chRows.map(r=>r.v25));
+  const el = document.getElementById('chDetail');
+  el.innerHTML = '';
+  chRows.forEach(r => {
+    const yoy = ((r.v26-r.v25)/r.v25*100);
+    const c = yoy >= 0 ? '#4ade80' : '#f05050';
+    const w = (r.v26/maxV*100).toFixed(0);
+    const skuHtml = r.topSku.slice(0,3).map(s=>`<span style="font-size:10px;background:var(--bg4);color:var(--text2);padding:1px 6px;border-radius:4px;white-space:nowrap">${s}</span>`).join('');
+    el.innerHTML += `<div style="padding:9px 12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+        <span style="font-size:12px;font-weight:600;color:var(--text);flex:1">${r.n}</span>
+        <span style="font-size:10px;color:var(--text3)">${r.cat}</span>
+        <div class="ch-bar-wrap"><div class="ch-bar-fill" style="width:${w}%;background:${c};opacity:.7"></div></div>
+        <span style="font-size:12px;font-weight:600;color:var(--text);min-width:32px;text-align:right">${r.v26.toLocaleString()}</span>
+        <span style="font-size:10px;color:#4e566a;min-width:44px;text-align:right">25년 ${r.v25.toLocaleString()}</span>
+        <span style="font-size:11px;font-weight:600;color:${c};min-width:38px;text-align:right">${yoy>=0?'+':''}${yoy.toFixed(0)}%</span>
+      </div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap">${skuHtml}</div>
+    </div>`;
+  });
+}
+
+/* ── 채널 × 카테고리 매트릭스 ── */
+function buildChCatMatrix() {
+  const data = [
+    { ch:'CIS권',    기초케어:2044, 마스크팩:95,   클렌징:288, 선케어:63,  기타:9  },
+    { ch:'다이소',   기초케어:138,  마스크팩:1192, 클렌징:230, 선케어:0,   기타:0  },
+    { ch:'동남아권', 기초케어:308,  마스크팩:42,   클렌징:9,   선케어:71,  기타:45 },
+    { ch:'중국권',   기초케어:245,  마스크팩:135,  클렌징:17,  선케어:58,  기타:10 },
+    { ch:'올리브영', 기초케어:94,   마스크팩:5,    클렌징:279, 선케어:0,   기타:3  },
+    { ch:'자사몰',   기초케어:166,  마스크팩:46,   클렌징:24,  선케어:0,   기타:53 },
+    { ch:'동유럽권', 기초케어:151,  마스크팩:16,   클렌징:9,   선케어:3,   기타:8  },
+    { ch:'중동권',   기초케어:198,  마스크팩:8,    클렌징:0,   선케어:3,   기타:0  },
+  ];
+  const cats = ['기초케어','마스크팩','클렌징','선케어','기타'];
+  const catColors = {'기초케어':'#4f80ff','마스크팩':'#2dd4b0','클렌징':'#a78bfa','선케어':'#fb923c','기타':'#9099b5'};
+  const maxCell = Math.max(...data.flatMap(r => cats.map(c => r[c]||0)));
+
+  let html = `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">
+    <thead><tr>
+      <th style="text-align:left;padding:6px 10px;border-bottom:1px solid var(--border);color:var(--text3);font-weight:600;width:80px">채널</th>
+      ${cats.map(c=>`<th style="text-align:right;padding:6px 10px;border-bottom:1px solid var(--border);color:${catColors[c]};font-weight:600">${c}</th>`).join('')}
+      <th style="text-align:right;padding:6px 10px;border-bottom:1px solid var(--border);color:var(--text3);font-weight:600">합계</th>
+    </tr></thead><tbody>`;
+  data.forEach(r => {
+    const tot = cats.reduce((s,c)=>s+(r[c]||0),0);
+    html += `<tr>
+      <td style="padding:6px 10px;font-weight:600;border-bottom:1px solid var(--border);color:var(--text2)">${r.ch}</td>
+      ${cats.map(c => {
+        const v = r[c]||0;
+        const intensity = Math.round(v/maxCell*100);
+        const col = catColors[c];
+        return `<td style="padding:6px 10px;text-align:right;border-bottom:1px solid var(--border)">
+          <div style="display:inline-flex;align-items:center;gap:5px;justify-content:flex-end">
+            <div style="width:${Math.max(2,Math.round(intensity*0.4))}px;height:8px;border-radius:2px;background:${col};opacity:${0.2+intensity/140};flex-shrink:0"></div>
+            <span style="color:${v>0?'var(--text)':'var(--text3)'};font-weight:${v>200?600:400}">${v>0?v.toLocaleString():'—'}</span>
+          </div>
+        </td>`;
+      }).join('')}
+      <td style="padding:6px 10px;text-align:right;border-bottom:1px solid var(--border);font-weight:600;color:var(--text)">${tot.toLocaleString()}</td>
+    </tr>`;
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('chCatMatrix').innerHTML = html;
+}
+
+/* ── SKU 폭포 차트 (非다이소) ── */
+function drawSkuWaterfall() {
+  const canvas = document.getElementById('cSkuWaterfall');
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.offsetWidth || 400;
+  const h = 200;
+  canvas.width = w * dpr; canvas.height = h * dpr;
+  canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  // 非다이소 기준: 25년 10,807 → 소멸 -2,725 → 공통하락 -3,507 → 신규 +831 → 26년 5,407
+  const items = [
+    { l:'25년\n기타', v:10807, base:0,    c:'rgba(160,168,190,0.55)', abs:true },
+    { l:'소멸\nSKU',  v:-3592, base:14575, c:'rgba(200,40,40,0.7)',   abs:false },
+    { l:'공통\nSKU\n하락', v:-5350, base:10983, c:'rgba(200,40,40,0.5)', abs:false },
+    { l:'신규\nSKU',  v:1039,  base:5633, c:'rgba(26,128,64,0.75)',  abs:false },
+    { l:'26년\n기타', v:6671,  base:0,    c:'rgba(124,92,232,0.75)', abs:true },
+  ];
+
+  const maxV = 12000;
+  const pad = {t:16,r:16,b:42,l:52};
+  const cw = w - pad.l - pad.r;
+  const ch = h - pad.t - pad.b;
+  const gridLines = 4;
+
+  ctx.font = '10px ' + getComputedStyle(document.body).fontFamily;
+  ctx.fillStyle = '#9099b5';
+  ctx.textAlign = 'right';
+  for (let i=0; i<=gridLines; i++) {
+    const v = maxV * i / gridLines;
+    const y = pad.t + ch - ch * i / gridLines;
+    ctx.globalAlpha = 0.4;
+    ctx.strokeStyle = 'rgba(0,0,0,0.07)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.fillText((v/1000).toFixed(0)+'B', pad.l-4, y+4);
+  }
+
+  const bw = (cw / items.length) * 0.6;
+  const gap = (cw / items.length) * 0.4 / 2;
+  items.forEach((item, i) => {
+    const x = pad.l + i * (cw / items.length) + gap;
+    let barH, barY;
+    if (item.abs) {
+      barH = ch * item.v / maxV;
+      barY = pad.t + ch - barH;
+    } else {
+      const topV = item.base + item.v;
+      barH = ch * Math.abs(item.v) / maxV;
+      barY = pad.t + ch - ch * Math.max(item.base, item.base + item.v) / maxV;
+    }
+    ctx.fillStyle = item.c;
+    roundRect(ctx, x, barY, bw, Math.max(2,barH), 3);
+    ctx.fillStyle = '#6b7491';
+    ctx.textAlign = 'center';
+    ctx.font = '9px ' + getComputedStyle(document.body).fontFamily;
+    ctx.fillText((item.v>0?'+':'') + (item.v/1000).toFixed(1)+'B', x + bw/2, barY - 4);
+    item.l.split('\n').forEach((ln, li) => {
+      ctx.fillText(ln, x + bw/2, pad.t + ch + 12 + li*11);
+    });
+  });
+}
+
+/* ── SKU 리스트 (非다이소) ── */
+function buildSkuLists() {
+  const newSkus = [
+    {n:'물톡스피디알엔히알드롭겔크림_50g',        v:121, ch:'CIS권'},
+    {n:'프리미엄콜라겐나이테마사지스틱(세키도)',    v:64, ch:'일본권'},
+    {n:'액티브실키선크림(구로고)_50ml',            v:46, ch:'중국권'},
+    {n:'레드락토콜라겐모이스처핸드크림(올영)',      v:37, ch:'올리브영'},
+    {n:'셀톡싱더마쥬르아이크림_30ml',              v:32, ch:'CIS권'},
+    {n:'프리미엄콜라겐나이테마사지스틱_55ml',      v:32, ch:'일본권'},
+    {n:'레드락토콜라겐UV핸드크림(올영)',            v:27, ch:'올리브영'},
+    {n:'레드락토콜라겐3,000샷세럼_50g',            v:25, ch:'CIS권'},
+    {n:'영시카피디알엔엑소핀글루타치온세럼(프랑스)', v:23, ch:'기타유럽권'},
+    {n:'프리미엄콜라겐나이테마사지스틱(중동)',      v:23, ch:'중동권'},
+  ];
+  const lostSkus = [
+    {n:'히알루론로즈모이스처앰플마스크(50ea)',     v:514, ch:'중국권'},
+    {n:'로얄로즈프리미엄모델링세트(위생허가)',      v:484, ch:'중국권'},
+    {n:'매출액 오차 조정',                         v:267, ch:'북미권'},
+    {n:'기타매출',                                 v:158, ch:'기타'},
+    {n:'히알루론로즈모이스처앰플마스크(중문X)',     v:97,  ch:'북미권'},
+    {n:'더마메종 매출',                             v:73,  ch:'더마메종'},
+    {n:'골드에이지톡스H8크림(QR)_50g',             v:72,  ch:'CIS권'},
+    {n:'블루아쿠아톡스크림_50g',                   v:70,  ch:'도매'},
+    {n:'히알루론로즈모이스처앰플마스크(중문X)2',    v:64,  ch:'중국권'},
+    {n:'엑스트라슈퍼9플러스2.0(올영)',              v:59,  ch:'올리브영'},
+  ];
+  const maxN = Math.max(...newSkus.map(s=>s.v), ...lostSkus.map(s=>s.v));
+  const renderList = (id, items, color) => {
+    document.getElementById(id).innerHTML = items.map(s => {
+      const w = (s.v/maxN*100).toFixed(0);
+      return `<div style="display:flex;align-items:center;gap:7px;padding:6px 10px;background:var(--bg3);border-radius:7px;border:1px solid var(--border);margin-bottom:5px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.n}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:1px">${s.ch}</div>
+        </div>
+        <div style="width:50px;height:4px;background:var(--bg4);border-radius:2px;flex-shrink:0;overflow:hidden">
+          <div style="width:${w}%;height:100%;background:${color};border-radius:2px"></div>
+        </div>
+        <span style="font-size:11px;font-weight:600;color:var(--text);min-width:28px;text-align:right;flex-shrink:0">${s.v}</span>
+      </div>`;
+    }).join('');
+  };
+  renderList('skuNew', newSkus, '#1a8040');
+  renderList('skuLost', lostSkus, '#c0202f');
+}
+
+/* ── 공통 SKU 테이블 (非다이소) ── */
+function buildSkuCommon() {
+  const rows = [
+    {n:'펩타이드톡스보르크림_50g',                          v26:252, v25:343},
+    {n:'펩타이드톡스보르멀티케어키트(토너,앰플,에멀젼,크림)', v26:245, v25:143},
+    {n:'골드에이지톡스H8크림_50g',                          v26:187, v25:108},
+    {n:'펩타이드톡스보르앰플_30ml',                         v26:185, v25:179},
+    {n:'마이크로티파우더클렌저_70g',                        v26:175, v25:155},
+    {n:'셀톡싱더마쥬르크림_50g',                            v26:175, v25:196},
+    {n:'파워아쿠아크림_50g',                                v26:173, v25:178},
+    {n:'프리미엄골든까멜리아링클크림_50g',                  v26:166, v25:180},
+    {n:'엑스트라슈퍼9플러스3X한정기획세트(올영)',            v26:146, v25:184},
+    {n:'럭셔리24케이골드앰플_100ml',                        v26:139, v25:184},
+    {n:'히알콤부차티톡스토너_150ml',                        v26:139, v25:107},
+    {n:'바이오인텐스글루타치온화이트크림_50g',              v26:129, v25:254},
+    {n:'알고톡스딥클리어_150ml',                            v26:124, v25:108},
+    {n:'펩타이드톡스보르아이크림_40ml',                     v26:119, v25:79},
+    {n:'시카놀앰플마스크_30mlx50ea(위생허가)',               v26:105, v25:183},
+  ];
+  document.getElementById('skuCommonBody').innerHTML = rows.map(r => {
+    const yoy = r.v25>0 ? ((r.v26-r.v25)/r.v25*100) : null;
+    const diff = r.v26-r.v25;
+    const c = (yoy===null||yoy>=0) ? '#1a8040' : '#c0202f';
+    return `<tr>
+      <td style="font-size:11px">${r.n}</td>
+      <td>${r.v26}</td>
+      <td style="color:var(--text3)">${r.v25>0?r.v25:'NEW'}</td>
+      <td style="color:${c};font-weight:600">${yoy===null?'NEW':(yoy>=0?'+':'')+yoy.toFixed(0)+'%'}</td>
+      <td style="color:${c};font-weight:600">${diff>=0?'+':''}${diff}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── 탭 전환 ── */
+document.getElementById('otherTabs').addEventListener('click', e => {
+  if (!e.target.dataset.v) return;
+  document.querySelectorAll('#otherTabs .tab').forEach(t => t.classList.remove('active'));
+  e.target.classList.add('active');
+  const v = e.target.dataset.v;
+  document.getElementById('viewCh').style.display  = v==='ch'  ? '' : 'none';
+  document.getElementById('viewSku').style.display = v==='sku' ? '' : 'none';
+  if (v==='sku') { drawSkuWaterfall(); drawCat(); }
+});
+
+/* ── YoY 목록 ── */
+const yoyRows = [
+  {n:'전사 누적(1~4)',   act:-33.4, proj:+21.9},
+  {n:'전사 4월',         act:-87.8, proj:+21.9},
+  {n:'국내 누적(1~4)',   act:-23.3, proj:-23.3},
+  {n:'해외 누적(1~4)',   act:-36.6, proj:-36.6},
+  {n:'Hero 4월',         act:-82.4, proj:+76.2},
+  {n:'Champion(非다)',   act:-95.1, proj:-51.5},
+  {n:'기타 4월',         act:-90.4, proj:-4.2},
+];
+function buildYoY() {
+  const el = document.getElementById('yoyList');
+  el.innerHTML = '';
+  yoyRows.forEach(d => {
+    const v = isProj ? d.proj : d.act;
+    const pos = v >= 0;
+    const w = Math.min(46, Math.abs(v) * 0.88);
+    const c = pos ? '#4ade80' : '#f05050';
+    el.innerHTML += `<div class="yoy-row">
+      <span class="yoy-name">${d.n}</span>
+      <div class="yoy-track"><div class="yoy-zero"></div>
+        <div class="yoy-bar" style="left:${pos?'50%':`calc(50% - ${w}%)`};width:${w}%;background:${c};opacity:.8"></div>
+      </div>
+      <span class="yoy-pct" style="color:${c}">${pos?'+':''}${v.toFixed(1)}%</span>
+    </div>`;
+  });
+}
+
+/* ── KPI 업데이트 ── */
+function updateKPIs() {
+  const m3 = isProj ? mar4P : mar4A;
+  const acc = acc123 + m3;
+  const yoyAcc = ((acc - acc25_4) / acc25_4 * 100);
+  const yoy3   = ((m3 - mar4_25) / mar4_25 * 100);
+  const achvCum = (acc / plan_cum * 100);
+  const achv3   = (m3 / plan_4 * 100);
+
+  document.getElementById('kv1').textContent = (acc/100).toFixed(1);
+  document.getElementById('kv2').textContent = achvCum.toFixed(1);
+  document.getElementById('kv3').textContent = (m3/100).toFixed(0);
+  document.getElementById('kv4').textContent = achv3.toFixed(1);
+
+  const c1 = document.getElementById('kc1');
+  c1.textContent = (yoyAcc>=0?'▲ ':'▼ ') + Math.abs(yoyAcc).toFixed(1) + '%';
+  c1.className = 'chip ' + (yoyAcc>=0?'g':'r');
+
+  const c2 = document.getElementById('kc2');
+  const diff = achvCum - 100;
+  c2.textContent = diff >= 0 ? '✓ '+diff.toFixed(1)+'%p 초과' : '△ '+Math.abs(diff).toFixed(1)+'%p 미달';
+  c2.className = 'chip ' + (diff>=0?'g':'a');
+
+  const c3 = document.getElementById('kc3');
+  c3.textContent = (yoy3>=0?'▲ ':'▼ ') + Math.abs(yoy3).toFixed(1) + '%';
+  c3.className = 'chip ' + (yoy3>=0?'g':'r');
+  document.getElementById('kl3').textContent = 'YoY (' + (isProj?'예상':'현재') + ')';
+  document.getElementById('kl4').textContent = isProj ? '4월 월말 예상' : '4월 현재';
+  document.getElementById('kc4').className = 'chip ' + (achv3>=90?'g':achv3>=70?'a':'r');
+
+  ['pb1','pb2','pb3','pb4'].forEach(id => {
+    document.getElementById(id).className = 'proj-badge' + (isProj?' on':'');
+  });
+}
+
+/* ── 4개 세그먼트 데이터 ── */
+const SEG = {
+  hero:  { label:'Hero', color:'#3b6ef5', v26m:[2156,1905,2862,398], v25:7568, plan:8084,
+    cats:[
+      { n:'기초케어 · 로션/크림',    v:2206, d:'메디필', m:'기초케어', s:'로션/크림' },
+      { n:'기초케어 · 에센스/세럼',  v:840,  d:'메디필', m:'기초케어', s:'에센스/세럼' },
+      { n:'기초케어 · 스페셜케어',   v:725,  d:'메디필', m:'기초케어', s:'스페셜케어' },
+      { n:'기초케어 · 앰플/오일',    v:614,  d:'메디필', m:'기초케어', s:'앰플/오일' },
+      { n:'기초케어 · 토너/미스트',  v:518,  d:'메디필', m:'기초케어', s:'토너/미스트' },
+      { n:'마스크팩 · 패드/부분패치', v:376,  d:'메디필', m:'마스크팩', s:'패드/부분패치' },
+      { n:'선케어 · 선프로텍션',     v:263,  d:'메디필/MDP', m:'선케어', s:'선프로텍션' },
+      { n:'클렌징 · 클렌저',        v:111,  d:'메디필', m:'클렌징', s:'클렌저' },
+      { n:'기타',                    v:275,  d:'—', m:'복합세트/마스크팩 外', s:'—' },
+    ]
+  },
+  champ: { label:'Champion(非다이소)', color:'#e8650a', v26m:[2287,3222,1976,86], v25:9875, plan:null,
+    cats:[
+      { n:'기초케어 · 스페셜케어',   v:2011, d:'메디필', m:'기초케어', s:'스페셜케어' },
+      { n:'마스크팩 · 필오프',       v:1839, d:'메디필', m:'마스크팩', s:'필오프' },
+      { n:'기초케어 · 로션/크림',    v:1302, d:'메디필', m:'기초케어', s:'로션/크림' },
+      { n:'클렌징 · 클렌저',        v:1219, d:'메디필', m:'클렌징', s:'클렌저' },
+      { n:'생활케어 · 핸드/풋케어',  v:744,  d:'메디필', m:'생활케어', s:'핸드/풋케어' },
+      { n:'기초케어 · 앰플/오일',    v:669,  d:'메디필', m:'기초케어', s:'앰플/오일' },
+      { n:'소프트번들',              v:143,  d:'메디필', m:'소프트번들', s:'소프트번들' },
+      { n:'기타(MDP 포함)',          v:237,  d:'MDP 外', m:'기초케어(P)/클렌징(P)', s:'—' },
+    ]
+  },
+  daiso: { label:'다이소(전체)', color:'#0ea97e', v26m:[982,799,969,239], v25:4846, plan:null,
+    cats:[
+      { n:'마스크팩 · 패드/부분패치', v:1065, d:'메디필', m:'마스크팩', s:'패드/부분패치' },
+      { n:'마스크팩 · 필오프',        v:533,  d:'메디필', m:'마스크팩', s:'필오프(랩핑)' },
+      { n:'기초케어 · 로션/크림',     v:402,  d:'메디필', m:'기초케어', s:'로션/크림' },
+      { n:'기초케어 · 앰플/오일',     v:147,  d:'메디필', m:'기초케어', s:'앰플/오일' },
+      { n:'클렌징 · 클렌저',         v:230,  d:'메디필', m:'클렌징', s:'클렌저' },
+      { n:'기초케어 · 스페셜케어',    v:97,   d:'메디필', m:'기초케어', s:'스페셜케어' },
+    ]
+  },
+  other: { label:'기타(非다이소)', color:'#7c5ce8', v26m:[1730,1887,2694,361], v25:14575, plan:null,
+    cats:[
+      { n:'기초케어 · 로션/크림',    v:1564, d:'메디필', m:'기초케어', s:'로션/크림' },
+      { n:'마스크팩 · 패드/부분패치', v:1051, d:'메디필', m:'마스크팩', s:'패드/부분패치' },
+      { n:'기초케어 · 앰플/오일',    v:983,  d:'메디필', m:'기초케어', s:'앰플/오일' },
+      { n:'클렌징 · 클렌저',        v:536,  d:'메디필', m:'클렌징', s:'클렌저' },
+      { n:'마스크팩 · 시트마스크',   v:463,  d:'메디필', m:'마스크팩', s:'시트마스크' },
+      { n:'기초케어 · 스페셜케어',   v:460,  d:'메디필', m:'기초케어', s:'스페셜케어' },
+      { n:'클렌징 · 필링/스크럽',   v:412,  d:'메디필', m:'클렌징', s:'필링/스크럽' },
+      { n:'기초케어 · 토너/미스트',  v:401,  d:'메디필', m:'기초케어', s:'토너/미스트' },
+      { n:'선케어 · 선프로텍션',     v:186,  d:'메디필', m:'선케어', s:'선프로텍션' },
+      { n:'기타(더마메종 포함)',      v:351,  d:'더마메종/메디필', m:'생활케어 外', s:'—' },
+    ]
+  },
+};
+
+function segAcc(s) { return s.v26m.reduce((a,b)=>a+b,0); }
+
+/* ── 세그먼트 KPI 카드 ── */
+function buildSegKpis() {
+  const el = document.getElementById('segKpis');
+  el.innerHTML = Object.values(SEG).map(s => {
+    const acc = segAcc(s);
+    const yoy = ((acc-s.v25)/s.v25*100);
+    const c = yoy>=0?'#1a8040':'#c0202f';
+    const bg = yoy>=0?'rgba(30,160,80,.08)':'rgba(200,40,40,.08)';
+    return `<div class="card" style="padding:14px 16px;border-top:2px solid ${s.color}">
+      <div style="font-size:10px;font-weight:600;color:${s.color};letter-spacing:.03em;margin-bottom:8px;text-transform:uppercase">${s.label}</div>
+      <div style="font-size:20px;font-weight:700;color:var(--text);letter-spacing:-.02em">${Math.round(acc).toLocaleString()}</div>
+      <div style="font-size:10px;color:var(--text3);margin:3px 0 6px">백만원 누적</div>
+      <span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:${bg};color:${c}">${yoy>=0?'▲':'▼'}${Math.abs(yoy).toFixed(0)}% YoY</span>
+    </div>`;
+  }).join('');
+}
+
+/* ── 계층형 브랜드 테이블 ── */
+function buildHierTable() {
+
+  function achvBar(v26, plan, color) {
+    if (!plan) return '<span style="color:#9099b5">—</span>';
+    const pct = Math.round(v26/plan*100);
+    const c = pct>=100?'#1a8040':pct>=80?'#d98b10':'#c0202f';
+    return `<div style="display:flex;align-items:center;gap:6px">
+      <div style="width:52px;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden">
+        <div style="width:${Math.min(pct,100)}%;height:100%;background:${color};opacity:.7;border-radius:3px"></div>
+      </div>
+      <span style="font-size:10px;font-weight:600;color:${c}">${pct}%</span>
+    </div>`;
+  }
+
+  function headerRow(label, v26, v25, color, plan=null) {
+    const yoy = v25>0 ? (v26-v25)/v25*100 : null;
+    const yc = yoy===null?'#9099b5':yoy>=0?'#1a8040':'#c0202f';
+    const yt = yoy===null?'—':(yoy>=0?'+':'')+yoy.toFixed(1)+'%';
+    return `<tr style="background:rgba(0,0,0,.025)">
+      <td style="font-weight:700;border-left:3px solid ${color};padding-left:10px">${label}</td>
+      <td style="font-weight:700;text-align:right">${Math.round(v26).toLocaleString()}</td>
+      <td style="color:#9099b5;text-align:right">${Math.round(v25).toLocaleString()}</td>
+      <td style="color:${yc};font-weight:700;text-align:right">${yt}</td>
+      <td style="text-align:right">${achvBar(v26, plan, color)}</td>
+    </tr>`;
+  }
+
+  function subRow(label, v26, v25, toggleId=null, indent=16) {
+    const yoy = v25>0 ? (v26-v25)/v25*100 : null;
+    const yc = yoy===null?'#9099b5':yoy>=0?'#1a8040':'#c0202f';
+    const yt = yoy===null?'—':(yoy>=0?'+':'')+yoy.toFixed(1)+'%';
+    const v25d = v25>0 ? Math.round(v25).toLocaleString() : '0';
+    const tog = toggleId ? `<span id="tog_${toggleId}" onclick="toggleBases('${toggleId}')" style="cursor:pointer;font-size:9px;color:#9099b5;margin-left:5px;user-select:none">▶</span>` : '';
+    return `<tr>
+      <td style="padding-left:${indent}px;font-size:12px;color:var(--text2)">∟ ${label}${tog}</td>
+      <td style="font-size:12px;text-align:right">${Math.round(v26).toLocaleString()}</td>
+      <td style="font-size:12px;color:#9099b5;text-align:right">${v25d}</td>
+      <td style="font-size:12px;color:${yc};font-weight:600;text-align:right">${yt}</td>
+      <td></td>
+    </tr>`;
+  }
+
+  function baseRow(n, v26, v25, gid, bg='rgba(124,92,232,.03)') {
+    const yoy = v25>0 ? (v26-v25)/v25*100 : null;
+    const yc = yoy===null?'#9099b5':yoy>=0?'#1a8040':'#c0202f';
+    const yt = yoy===null?'NEW':(yoy>=0?'+':'')+yoy.toFixed(1)+'%';
+    const v25d = v25>0 ? v25.toLocaleString() : '—';
+    return `<tr class="base_${gid}" style="display:none;background:${bg}">
+      <td style="padding-left:32px;font-size:11px;color:var(--text3)">· ${n}</td>
+      <td style="font-size:11px;text-align:right;color:var(--text2)">${v26>0?v26.toLocaleString():'0'}</td>
+      <td style="font-size:11px;color:#9099b5;text-align:right">${v25d}</td>
+      <td style="font-size:11px;color:${yc};text-align:right">${yt}</td>
+      <td></td>
+    </tr>`;
+  }
+
+  let html = '';
+
+  // ── Hero (기준정보 C열 품명 기준: 펩타이드9 / 피디알엔 / 레티날) ──
+  html += headerRow('Hero 전체', 7321, 7568, '#3b6ef5');
+
+  html += subRow('펩타이드9', 5453, 6648, 'h_p9');
+  [
+    {n:'펩타이드9볼륨앤텐션톡스크림프로',          v26:857.0, v25:1003.3},
+    {n:'펩타이드9볼륨올인원에센스프로',             v26:502.2, v25:587.6},
+    {n:'펩타이드볼륨톡스크림프로',                  v26:495.8, v25:557.8},
+    {n:'펩타이드9볼륨바이오톡스앰플프로',           v26:355.1, v25:380.7},
+    {n:'펩타이드9아쿠아에센스에멀전',               v26:350.5, v25:236.5},
+    {n:'펩타이드9볼륨리프톡스아이크림',             v26:295.1, v25:303.3},
+    {n:'펩타이드9바이오선스틱프로',                 v26:282.3, v25:742.5},
+    {n:'히알루로닉볼류미아이크림',                  v26:261.0, v25:346.8},
+    {n:'펩타이드9아쿠아에센스토너',                 v26:227.1, v25:232.2},
+    {n:'펩타이드9비타놀크림프로',                   v26:217.1, v25:272.3},
+    {n:'히알루론다크베논펩타이드9앰플아이패치',      v26:204.3, v25:296.8},
+    {n:'펩타이드9볼륨리프팅올인원에센스프로',        v26:198.9, v25:225.8},
+    {n:'펩타이드9볼륨리프팅마스크',                 v26:170.4, v25:12.0},
+    {n:'복합세트',                                  v26:143.0, v25:232.3},
+  ].forEach(b=>{ html += baseRow(b.n,b.v26,b.v25,'h_p9','rgba(59,110,245,.03)'); });
+
+  html += subRow('피디알엔', 1741, 919, 'h_pdr');
+  [
+    {n:'피토이엑스피디알엔리프팅샷크림',            v26:415.0, v25:0},
+    {n:'피토엑소좀피디알엔리프팅샷드롭겔크림',       v26:227.2, v25:0},
+    {n:'피토엑소좀피디알엔리프팅샷앰플',             v26:189.4, v25:117.6},
+    {n:'피토엑소좀피디알엔리프팅샷크림',             v26:144.8, v25:314.3},
+    {n:'피토엑소좀피디알엔리프팅샷세럼',             v26:108.4, v25:231.0},
+    {n:'피토이엑스피디알엔리프팅샷아이크림',         v26:107.5, v25:0},
+    {n:'피토엑소좀피디알엔리프팅샷아이크림',         v26:101.8, v25:58.1},
+    {n:'피토엑소좀피디알엔리프팅샷미스트',           v26:86.2,  v25:98.5},
+    {n:'피토이엑스피디알엔리프팅샷세럼',             v26:81.9,  v25:0},
+    {n:'피토엑소좀피디알엔리프팅샷토너',             v26:73.6,  v25:99.6},
+  ].forEach(b=>{ html += baseRow(b.n,b.v26,b.v25,'h_pdr','rgba(59,110,245,.03)'); });
+
+  html += subRow('레티날', 127, 0, 'h_ret');
+  [
+    {n:'레티날엔엠엔바운스샷아이크림',              v26:58.5,  v25:0},
+    {n:'레티날엔엠엔바운스샷부스터',                v26:44.1,  v25:0},
+    {n:'레티놀콜라겐리프팅크림',                    v26:24.3,  v25:0},
+  ].forEach(b=>{ html += baseRow(b.n,b.v26,b.v25,'h_ret','rgba(59,110,245,.03)'); });
+
+  // ── Champion (C열 품명 기준) + 다이소 ──
+  html += headerRow('Champion 전체', 10560, 14721, '#e8650a');
+
+  html += subRow('멜라논엑스', 2274, 2711, 'c_mel');
+  [
+    {n:'멜라논엑스크림2.0',             v26:794.1, v25:0},
+    {n:'멜라논엑스앰플알엑스',           v26:610.6, v25:0},
+    {n:'멜라논엑스크림',                 v26:499.5, v25:1088.5},
+    {n:'시딩및프로모션세트',             v26:224.7, v25:0},
+    {n:'멜라논엑스드롭겔크림',           v26:81.7,  v25:102.6},
+    {n:'멜라논엑스앰플',                 v26:49.1,  v25:1419.1},
+  ].forEach(b=>{ html += baseRow(b.n,b.v26,b.v25,'c_mel','rgba(232,101,10,.03)'); });
+
+  html += subRow('넥', 1720, 874, 'c_neck');
+  [
+    {n:'프리미엄펩타이드나이테1000샷넥스틱',        v26:941.8, v25:179.2},
+    {n:'프리미엄콜라겐나이테실넥크림3.0',           v26:706.0, v25:0},
+    {n:'프리미엄콜라겐나이테실넥크림2.0',           v26:50.7,  v25:688.2},
+    {n:'프리미엄콜라겐나이테1500샷넥패치1.0',       v26:21.4,  v25:0},
+  ].forEach(b=>{ html += baseRow(b.n,b.v26,b.v25,'c_neck','rgba(232,101,10,.03)'); });
+
+  html += subRow('랩핑마스크', 1525, 3992, 'c_wrap');
+  [
+    {n:'레드락토콜라겐랩핑마스크',                  v26:839.5, v25:2958.8},
+    {n:'콜라겐물광랩핑마스크',                      v26:615.1, v25:0},
+    {n:'히알루론산레이어물톡스랩핑마스크',           v26:21.5,  v25:102.4},
+    {n:'엑스트라슈퍼9플러스물광리프팅랩핑마스크',    v26:12.9,  v25:738.7},
+  ].forEach(b=>{ html += baseRow(b.n,b.v26,b.v25,'c_wrap','rgba(232,101,10,.03)'); });
+
+  html += subRow('클렌저', 1288, 1808, 'c_clnz');
+  [
+    {n:'레드락토콜라겐클리어2.0',                   v26:877.7, v25:1249.3},
+    {n:'그린시카콜라겐클리어2.0',                   v26:381.1, v25:502.4},
+    {n:'비건비타민콜라겐클리어젤클렌저',             v26:29.3,  v25:53.8},
+  ].forEach(b=>{ html += baseRow(b.n,b.v26,b.v25,'c_clnz','rgba(232,101,10,.03)'); });
+
+  html += subRow('풋', 764, 490, 'c_foot');
+  [
+    {n:'EGF스케일링모이스처풋크림',                 v26:764.2, v25:489.7},
+  ].forEach(b=>{ html += baseRow(b.n,b.v26,b.v25,'c_foot','rgba(232,101,10,.03)'); });
+
+  html += subRow('다이소(전체)', 2989, 4846, 'daiso');
+  [
+    {n:'물톡스광채보습패드2.0',               v26:418.1, v25:266.5},
+    {n:'멜라논엑스기미크림',                   v26:251.0, v25:0},
+    {n:'멜라논엑스기미앰플',                   v26:236.8, v25:0},
+    {n:'엑스트라슈퍼9플러스물광리프팅랩핑마스크',v26:217.6, v25:1219.6},
+    {n:'락토모공리프팅패드2.0',                v26:214.7, v25:243.5},
+    {n:'시카쿨링진정패드2.0',                  v26:200.2, v25:218.4},
+    {n:'엑스트라슈퍼9플러스피지연화제',         v26:173.5, v25:297.7},
+    {n:'비타민멜라토닝패드2.0',                v26:123.1, v25:224.8},
+    {n:'엑스트라슈퍼9플러스모공타이트닝앰플',   v26:111.9, v25:345.9},
+    {n:'락토모공리프팅랩핑마스크',              v26:85.7,  v25:192.2},
+  ].forEach(b=>{ html += baseRow(b.n,b.v26,b.v25,'daiso','rgba(232,101,10,.03)'); });
+
+  // ── 기타 전체 (非다이소, 1~4월 누적) ──
+  html += headerRow('기타 전체', 6671, 14575, '#7c5ce8');
+  [
+    {id:'cis', ch:'CIS권',    v26:3196, v25:5294, bases:[
+      {n:'펩타이드톡스보르크림',          v26:249.8, v25:247.4},
+      {n:'복합세트',                      v26:232.4, v25:297.3},
+      {n:'셀톡싱더마쥬르크림',            v26:169.5, v25:226.5},
+      {n:'마이크로티파우더클렌저',         v26:168.5, v25:233.6},
+      {n:'펩타이드톡스보르앰플',          v26:156.0, v25:146.0},
+      {n:'히알콤부차티톡스토너',           v26:138.3, v25:98.6},
+      {n:'파워아쿠아크림',                v26:131.5, v25:182.3},
+      {n:'알고톡스딥클리어',              v26:123.5, v25:140.4},
+    ]},
+    {id:'cn',  ch:'중국권',   v26:709,  v25:3666, bases:[
+      {n:'시카놀앰플마스크',               v26:177.2, v25:438.5},
+      {n:'액티브실키선크림',               v26:129.2, v25:129.6},
+      {n:'럭셔리24케이골드앰플',           v26:32.2,  v25:159.2},
+      {n:'로얄로즈프리미엄앰플',           v26:34.9,  v25:13.6},
+      {n:'액티브실키선크림2.0',            v26:27.9,  v25:0},
+      {n:'히알루론로즈모이스처앰플마스크',  v26:0,     v25:658.4},
+      {n:'로얄로즈프리미엄모델링팩',        v26:0,     v25:492.7},
+    ]},
+    {id:'sea', ch:'동남아권', v26:551,  v25:1189, bases:[
+      {n:'바이오인텐스글루타치온화이트크림',  v26:77.2,  v25:194.1},
+      {n:'액티브실키선크림2.0',              v26:58.9,  v25:0},
+      {n:'비타민알엑스바디로션',             v26:28.8,  v25:70.1},
+      {n:'콜라겐슈퍼10슬리핑크림',           v26:26.9,  v25:16.4},
+      {n:'골드에이지톡스H8크림',             v26:24.2,  v25:10.6},
+      {n:'펩타이드톡스보르크림',             v26:12.8,  v25:130.3},
+      {n:'바이오인텐스글루타치온화이트앰플',  v26:0,     v25:248.9},
+    ]},
+    {id:'oly', ch:'올리브영', v26:393,  v25:593,  bases:[
+      {n:'엑스트라슈퍼9플러스3X',            v26:161.8, v25:320.5},
+      {n:'히알루론산레이어물톡스앰플',        v26:92.9,  v25:83.8},
+      {n:'엑스트라슈퍼9플러스액티브스틱',     v26:40.4,  v25:51.7},
+      {n:'레드락토콜라겐모이스처핸드크림',    v26:37.1,  v25:0},
+      {n:'레드락토콜라겐UV핸드크림',          v26:27.8,  v25:0},
+      {n:'레드락토콜라겐클렌징밤',            v26:22.3,  v25:71.0},
+      {n:'레드락토콜라겐클렌징오일2.0',       v26:20.5,  v25:81.5},
+    ]},
+    {id:'jasm',ch:'자사몰',   v26:295,  v25:134,  bases:[]},
+    {id:'eu',  ch:'동유럽권', v26:303,  v25:800,  bases:[
+      {n:'복합세트',                    v26:47.4, v25:70.3},
+      {n:'히알콤부차티톡스토너',         v26:30.9, v25:50.1},
+      {n:'프리미엄골든까멜리아링클크림', v26:21.4, v25:29.3},
+      {n:'골드에이지톡스H8크림',         v26:20.8, v25:24.1},
+    ]},
+    {id:'etc', ch:'기타채널', v26:1221, v25:2899, bases:[
+      {n:'프리미엄콜라겐나이테마사지스틱1.0', v26:119.5, v25:0},
+      {n:'복합세트',                          v26:70.6,  v25:28.5},
+      {n:'메조필라아이세럼',                  v26:59.8,  v25:28.4},
+      {n:'엑스트라슈퍼9플러스2.0',            v26:54.7,  v25:67.8},
+      {n:'물톡스피디알엔히알드롭겔크림',       v26:41.7,  v25:0},
+      {n:'펩타이드톡스보르크림',              v26:39.7,  v25:37.5},
+      {n:'럭셔리24케이골드앰플',              v26:37.2,  v25:88.2},
+      {n:'메조콜라겐토너',                    v26:35.5,  v25:123.4},
+    ]},
+  ].forEach(ch=>{
+    html += subRow(ch.ch, ch.v26, ch.v25, ch.bases.length>0?ch.id:null);
+    ch.bases.forEach(b=>{ html += baseRow(b.n,b.v26,b.v25,ch.id); });
+  });
+
+  document.getElementById('hierBody').innerHTML = html;
+}
+
+function toggleBases(id) {
+  const rows = document.querySelectorAll(`.base_${id}`);
+  const tog = document.getElementById(`tog_${id}`);
+  const isHidden = rows[0] && rows[0].style.display === 'none';
+  rows.forEach(r => r.style.display = isHidden ? '' : 'none');
+  if (tog) tog.textContent = isHidden ? '▼' : '▶';
+}
+
+function renderBrands() { buildHierTable(); }
+
+/* ── 시사점 업데이트 ── */
+function updateInsights() {
+  const m3 = isProj ? mar4P : mar4A;
+  const acc = acc123 + m3;
+  const yoyAcc = ((acc - acc25_4) / acc25_4 * 100);
+  const yoy3   = ((m3 - mar4_25) / mar4_25 * 100);
+  const achvCum = (acc / plan_cum * 100);
+  const achv3   = (m3 / plan_4 * 100);
+  const sign = v => v >= 0 ? `▲ +${v.toFixed(1)}` : `▼ ${v.toFixed(1)}`;
+  const okCls = v => v >= 0 ? 'ok' : 'hi';
+
+  // ins1: 전사 매출
+  document.getElementById('ins1').innerHTML = isProj
+    ? `월말 예상 누적 <strong class="ok">${(acc/100).toFixed(1)}억</strong>, 전년 대비 <strong class="${okCls(yoyAcc)}">${sign(yoyAcc)}%</strong>. 계획 달성률 <strong class="ok">${achvCum.toFixed(1)}%</strong> 예상.`
+    : `누적 <strong>${(acc/100).toFixed(1)}억</strong>, 전년 대비 <strong class="hi">▼${Math.abs(yoyAcc).toFixed(1)}%</strong>. 계획 달성률 ${achvCum.toFixed(1)}%. 월말 예상 시 235.8억 / 90.5% 회복.`;
+
+  // ins2: 3월 경과
+  document.getElementById('ins2').innerHTML = isProj
+    ? `4월 월말 예상 YoY <strong class="ok">${sign(yoy3)}%</strong>. 달성률 <strong class="ok">${achv3.toFixed(1)}%</strong>로 개선 예상.`
+    : `4월은 <strong class="wa">10% 경과 중 (3/30일)</strong>. 현재 YoY <strong class="hi">${yoy3.toFixed(1)}%</strong>. 월말 예상 YoY <strong class="ok">+21.9%</strong>.`;
+
+  // ins5: Hero
+  document.getElementById('ins5').innerHTML = isProj
+    ? `Hero 월말 예상 YoY <strong class="ok">+35.7%</strong>. CIS권 <strong class="ok">+67.6%</strong>, 자사몰 <strong class="ok">+419%</strong> 급성장.`
+    : `Hero 4월 현재 398백만. 월말 예상 3,980백만 / 25년 2,259백만 → 예상YoY <strong class="ok">▲+76.2%</strong>.`;
+}
+
+/* ── 토글 ── */
+function toggleProj() {
+  isProj = !isProj;
+  const btn = document.getElementById('togBtn');
+  btn.classList.toggle('active', isProj);
+  document.getElementById('lblA').classList.toggle('on', !isProj);
+  document.getElementById('lblP').classList.toggle('on', isProj);
+  document.getElementById('projNote').classList.toggle('on', isProj);
+  document.getElementById('legProj').style.display = isProj ? '' : 'none';
+  document.getElementById('trendSub').textContent = isProj
+    ? '25년 실적 vs 26년 실적 (월말 예상 포함) vs 사업계획'
+    : '25년 실적 vs 26년 실적 (현재) vs 사업계획';
+  document.getElementById('yoySub').textContent = isProj ? '4월 월말 예상 기준 (%)' : '4월 현재(3일) 기준 (%)';
+  updateKPIs();
+  updateGPKPIs();
+  buildYoY();
+  drawTrend();
+  drawChannel();
+  renderBrands(currentFilter);
+  updateInsights();
+}
+
+/* ── 초기 렌더 ── */
+function initAll() {
+  updateKPIs();
+  updateGPKPIs();
+  buildYoY();
+  drawTrend();
+  drawChannel();
+  buildGPSkuAnalysis();
+  buildGPAnalysis();
+  buildBrandAnalysis(heroCfg);
+  buildBrandAnalysis(champCfg);
+  drawChYoyColored();
+  drawDonut('cDonut', dnData, dnColors);
+  buildDonutLegend();
+  buildChDetail();
+  buildChCatMatrix();
+  buildSkuLists();
+  buildSkuCommon();
+  buildSegKpis();
+  renderBrands('all');
+  updateInsights();
+}
+
+/* ── GP KPI 상수 ── */
+const GP_DATA = {
+  acc: { gp26:14166, gp25:16710, gpm26:60.4, gpm25:59.7 },
+  m3:  { gp26:550,   gp25:4962,  gpm26:50.7, gpm25:55.8, gp26p:5498 },  // 4월
+  note: '원가단가 미입력 건 제외 기준'
+};
+
+function updateGPKPIs() {
+  const isP = isProj;
+  const gp3    = isP ? GP_DATA.m3.gp26p : GP_DATA.m3.gp26;
+  const gpm3   = GP_DATA.m3.gpm26;
+  const gp_acc = GP_DATA.acc.gp26 - GP_DATA.m3.gp26 + gp3;
+
+  // 각 지표 YoY 계산
+  const gp_acc_yoy  = (gp_acc - GP_DATA.acc.gp25) / GP_DATA.acc.gp25 * 100;
+  const gpm_acc_diff = GP_DATA.acc.gpm26 - GP_DATA.acc.gpm25;
+  const gp3_yoy     = (gp3 - GP_DATA.m3.gp25) / GP_DATA.m3.gp25 * 100;
+  const gpm3_diff   = gpm3 - GP_DATA.m3.gpm25;
+
+  // chip 헬퍼: pct=퍼센트변화, isPoint=%p 단위 여부
+  function setChip(id, diff, isPoint) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const up = diff >= 0;
+    el.className = up ? 'chip g' : 'chip r';
+    const sign = up ? '▲ +' : '▼ ';
+    const abs  = Math.abs(diff).toFixed(1);
+    el.textContent = isPoint ? sign + abs + '%p' : sign + abs + '%';
+  }
+
+  const el = (id) => document.getElementById(id);
+  if (el('kv_gp_acc'))  el('kv_gp_acc').textContent  = (gp_acc/100).toFixed(1);
+  if (el('kv_gpm_acc')) el('kv_gpm_acc').textContent = GP_DATA.acc.gpm26.toFixed(1);
+  if (el('kv_gp3'))     el('kv_gp3').textContent     = (gp3/100).toFixed(1);
+  if (el('kv_gpm3'))    el('kv_gpm3').textContent    = gpm3.toFixed(1);
+  if (el('kl_gp3'))     el('kl_gp3').textContent     = 'YoY (' + (isP ? '예상' : '현재') + ')';
+  if (el('pb_gp3'))     el('pb_gp3').className        = 'proj-badge' + (isP ? ' on' : '');
+
+  setChip('chip_gp_acc',  gp_acc_yoy,  false);
+  setChip('chip_gpm_acc', gpm_acc_diff, true);
+  setChip('chip_gp3',     gp3_yoy,     false);
+  setChip('chip_gpm3',    gpm3_diff,   true);
+}
+
+/* ── 기타 GP SKU 분석 ── */
+function buildGPSkuAnalysis() {
+  const gpTopRows = [
+    {n:'펩타이드톡스보르크림_50g',           gp:156, gpm:62, rev:252, yoy:'-25%'},
+    {n:'셀톡싱더마쥬르크림_50g',             gp:124, gpm:73, rev:171, yoy:'-12%'},
+    {n:'펩타이드톡스보르앰플_30ml',           gp:114, gpm:63, rev:180, yoy:'+4%'},
+    {n:'펩타이드톡스보르멀티케어키트',         gp:114, gpm:50, rev:227, yoy:'+53%'},
+    {n:'프리미엄골든까멜리아링클크림_50g',     gp:98,  gpm:63, rev:156, yoy:'-16%'},
+    {n:'엑스트라슈퍼9플러스3X한정기획세트',    gp:95,  gpm:65, rev:145, yoy:'+65%'},
+    {n:'펩타이드톡스보르아이크림_40ml',        gp:94,  gpm:81, rev:116, yoy:'+47%'},
+    {n:'골드에이지톡스H8크림_50g',            gp:93,  gpm:54, rev:173, yoy:'+50%'},
+    {n:'파워아쿠아크림_50g',                  gp:89,  gpm:55, rev:160, yoy:'-13%'},
+    {n:'바이오인텐스글루타치온화이트크림_50g', gp:78,  gpm:61, rev:128, yoy:'-48%'},
+  ];
+  const maxGP = gpTopRows[0].gp;
+  const gpTopEl = document.getElementById('gpTopBody');
+  if (gpTopEl) gpTopEl.innerHTML = gpTopRows.map(r => {
+    const yc = r.yoy.startsWith('+') ? '#1a8040' : '#c0202f';
+    const pw = (r.gp/maxGP*100).toFixed(0);
+    return `<tr>
+      <td style="font-size:11px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.n}</td>
+      <td><div style="display:flex;align-items:center;gap:4px">
+        <div style="width:${Math.round(pw*0.4)}px;height:5px;background:#2ba84a;border-radius:2px;opacity:.7;flex-shrink:0"></div>
+        <span style="font-weight:600">${r.gp}</span></div></td>
+      <td style="color:#2ba84a;font-weight:600">${r.gpm}%</td>
+      <td style="color:var(--text3)">${r.rev}</td>
+      <td style="color:${yc};font-weight:600">${r.yoy}</td>
+    </tr>`;
+  }).join('');
+
+  const gpNewSkus = [
+    {n:'물톡스피디알엔히알드롭겔크림_50g',    gp:58, gpm:52, ch:'CIS권'},
+    {n:'프리미엄콜라겐나이테마사지스틱55ml',   gp:44, gpm:76, ch:'일본권'},
+    {n:'나이테마사지스틱(세키도)',              gp:35, gpm:55, ch:'일본권'},
+    {n:'액티브실키선크림(구로고)',              gp:28, gpm:40, ch:'중국권'},
+    {n:'레드락토콜라겐모이스처핸드크림(올영)', gp:26, gpm:70, ch:'올리브영'},
+    {n:'액티브실키선크림2.0(N2)',              gp:25, gpm:100,ch:'해외'},
+    {n:'셀톡싱더마쥬르아이크림_30ml',          gp:22, gpm:60, ch:'CIS권'},
+    {n:'피디알엔엑소핀글루타치온세럼(프랑스)', gp:22, gpm:94, ch:'기타유럽권'},
+  ];
+  const maxNGP = gpNewSkus[0].gp;
+  const gpNewEl = document.getElementById('gpNewSkuList');
+  if (gpNewEl) gpNewEl.innerHTML = gpNewSkus.map(s => {
+    const w = (s.gp/maxNGP*100).toFixed(0);
+    const gc = s.gpm >= 70 ? '#1a8040' : s.gpm >= 50 ? '#0ea97e' : '#d98b10';
+    return `<div style="display:flex;align-items:center;gap:7px;padding:6px 10px;background:var(--bg3);border-radius:7px;border:1px solid var(--border);margin-bottom:5px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:11px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.n}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:1px">${s.ch} · GPM <span style="color:${gc};font-weight:600">${s.gpm}%</span></div>
+      </div>
+      <div style="width:40px;height:4px;background:var(--bg4);border-radius:2px;flex-shrink:0;overflow:hidden">
+        <div style="width:${w}%;height:100%;background:#2ba84a;opacity:.8;border-radius:2px"></div>
+      </div>
+      <span style="font-size:11px;font-weight:600;color:#2ba84a;min-width:24px;text-align:right;flex-shrink:0">${s.gp}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ── GP 차트 ── */
+/* ════════════════════════════════════════════
+   공통 유틸: 브랜드 분석 빌더
+   ════════════════════════════════════════════ */
+function buildBrandAnalysis(cfg) {
+  // cfg: { tabsId, viewChId, viewSkuId, chYoyId, donutId, donutLegendId,
+  //         waterfallId, catId, chDetailId, chCatMatrixId,
+  //         skuNewId, skuLostId, skuCommonId,
+  //         chLabels, ch25, ch26, chColors,
+  //         dnLabels, dnData, dnColors,
+  //         chRows, catLabels, catData, catColors,
+  //         wfItems, wfMax,
+  //         newSkus, lostSkus, commonRows }
+
+  // 탭 전환
+  document.getElementById(cfg.tabsId).addEventListener('click', e => {
+    if (!e.target.dataset.v) return;
+    document.querySelectorAll('#'+cfg.tabsId+' .tab').forEach(t=>t.classList.remove('active'));
+    e.target.classList.add('active');
+    const v = e.target.dataset.v;
+    document.getElementById(cfg.viewChId).style.display  = v==='ch' ? '' : 'none';
+    document.getElementById(cfg.viewSkuId).style.display = v==='sku' ? '' : 'none';
+    if (v==='sku') { buildBrandWaterfall(cfg); buildBrandCat(cfg); }
+  });
+
+  // 채널 YoY 바 차트
+  buildColoredBarChart(cfg.chYoyId, cfg.chLabels, cfg.ch25, cfg.ch26, 210);
+
+  // 도넛
+  drawDonut(cfg.donutId, cfg.dnData, cfg.dnColors);
+  const dlEl = document.getElementById(cfg.donutLegendId);
+  dlEl.innerHTML = '';
+  const tot = cfg.dnData.reduce((a,b)=>a+b,0);
+  cfg.dnLabels.forEach((l,i) => {
+    dlEl.innerHTML += `<div class="dl-row">
+      <div class="dl-dot" style="background:${cfg.dnColors[i]}"></div>
+      <span class="dl-name">${l}</span>
+      <span class="dl-val">${cfg.dnData[i].toLocaleString()}</span>
+      <span class="dl-pct">${(cfg.dnData[i]/tot*100).toFixed(0)}%</span>
+    </div>`;
+  });
+
+  // 채널 상세
+  const maxV = Math.max(...cfg.chRows.map(r=>r.v25||r.v26));
+  const chEl = document.getElementById(cfg.chDetailId);
+  chEl.innerHTML = '';
+  cfg.chRows.forEach(r => {
+    const yoy = r.v25>0 ? ((r.v26-r.v25)/r.v25*100) : null;
+    const c = yoy===null?'#1a8040':yoy>=0?'#1a8040':'#c0202f';
+    const w = (r.v26/maxV*100).toFixed(0);
+    const skuHtml = r.topSku.slice(0,3).map(s=>`<span style="font-size:10px;background:var(--bg4);color:var(--text2);padding:1px 6px;border-radius:4px;white-space:nowrap">${s}</span>`).join('');
+    chEl.innerHTML += `<div style="padding:9px 12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+        <span style="font-size:12px;font-weight:600;color:var(--text);flex:1">${r.n}</span>
+        <span style="font-size:10px;color:var(--text3)">${r.cat}</span>
+        <div class="ch-bar-wrap"><div class="ch-bar-fill" style="width:${w}%;background:${c};opacity:.7"></div></div>
+        <span style="font-size:12px;font-weight:600;color:var(--text);min-width:32px;text-align:right">${r.v26.toLocaleString()}</span>
+        <span style="font-size:10px;color:#9099b5;min-width:44px;text-align:right">25년 ${r.v25.toLocaleString()}</span>
+        <span style="font-size:11px;font-weight:600;color:${c};min-width:42px;text-align:right">${yoy===null?'NEW':(yoy>=0?'+':'')+yoy.toFixed(0)+'%'}</span>
+      </div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap">${skuHtml}</div>
+    </div>`;
+  });
+
+  // 채널 × 카테고리 매트릭스
+  if (cfg.chCatMatrixId && cfg.matrixData) {
+    const cats = cfg.matrixCats;
+    const catColors = cfg.matrixCatColors;
+    const allVals = cfg.matrixData.flatMap(r => cats.map(c=>r[c]||0));
+    const maxCell = Math.max(...allVals);
+    let html = `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">
+      <thead><tr>
+        <th style="text-align:left;padding:5px 10px;border-bottom:1px solid var(--border);color:var(--text3);font-weight:600;width:80px">채널</th>
+        ${cats.map(c=>`<th style="text-align:right;padding:5px 10px;border-bottom:1px solid var(--border);color:${catColors[c]};font-weight:600">${c}</th>`).join('')}
+        <th style="text-align:right;padding:5px 10px;border-bottom:1px solid var(--border);color:var(--text3);font-weight:600">합계</th>
+      </tr></thead><tbody>`;
+    cfg.matrixData.forEach(r => {
+      const tot = cats.reduce((s,c)=>s+(r[c]||0),0);
+      html += `<tr><td style="padding:5px 10px;font-weight:600;border-bottom:1px solid var(--border);color:var(--text2)">${r.ch}</td>
+        ${cats.map(c => {
+          const v = r[c]||0;
+          const intensity = Math.round(v/maxCell*100);
+          const col = catColors[c];
+          return `<td style="padding:5px 10px;text-align:right;border-bottom:1px solid var(--border)">
+            <div style="display:inline-flex;align-items:center;gap:4px;justify-content:flex-end">
+              <div style="width:${Math.max(2,Math.round(intensity*0.35))}px;height:7px;border-radius:2px;background:${col};opacity:${0.2+intensity/130};flex-shrink:0"></div>
+              <span style="color:${v>0?'var(--text)':'var(--text3)'};font-weight:${v>200?600:400}">${v>0?Math.round(v).toLocaleString():'—'}</span>
+            </div></td>`;
+        }).join('')}
+        <td style="padding:5px 10px;text-align:right;border-bottom:1px solid var(--border);font-weight:600;color:var(--text)">${Math.round(tot).toLocaleString()}</td>
+      </tr>`;
+    });
+    html += '</tbody></table></div>';
+    document.getElementById(cfg.chCatMatrixId).innerHTML = html;
+  }
+
+  // SKU 리스트
+  const maxN = Math.max(...cfg.newSkus.map(s=>s.v), ...cfg.lostSkus.map(s=>s.v));
+  const renderSkuList = (id, items, color) => {
+    document.getElementById(id).innerHTML = items.map(s => {
+      const w = (s.v/maxN*100).toFixed(0);
+      return `<div style="display:flex;align-items:center;gap:7px;padding:6px 10px;background:var(--bg3);border-radius:7px;border:1px solid var(--border);margin-bottom:5px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.n}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:1px">${s.ch}</div>
+        </div>
+        <div style="width:50px;height:4px;background:var(--bg4);border-radius:2px;flex-shrink:0;overflow:hidden">
+          <div style="width:${w}%;height:100%;background:${color};border-radius:2px"></div>
+        </div>
+        <span style="font-size:11px;font-weight:600;color:var(--text);min-width:28px;text-align:right;flex-shrink:0">${s.v}</span>
+      </div>`;
+    }).join('');
+  };
+  renderSkuList(cfg.skuNewId, cfg.newSkus, '#1a8040');
+  renderSkuList(cfg.skuLostId, cfg.lostSkus, '#c0202f');
+
+  // 공통 SKU 테이블
+  document.getElementById(cfg.skuCommonId).innerHTML = cfg.commonRows.map(r => {
+    const yoy = r.v25>0 ? ((r.v26-r.v25)/r.v25*100) : null;
+    const diff = r.v26-r.v25;
+    const c = (yoy===null||yoy>=0)?'#1a8040':'#c0202f';
+    return `<tr>
+      <td style="font-size:11px">${r.n}</td>
+      <td>${r.v26}</td>
+      <td style="color:var(--text3)">${r.v25>0?r.v25:'NEW'}</td>
+      <td style="color:${c};font-weight:600">${yoy===null?'NEW':(yoy>=0?'+':'')+yoy.toFixed(0)+'%'}</td>
+      <td style="color:${c};font-weight:600">${diff>=0?'+':''}${diff}</td>
+    </tr>`;
+  }).join('');
+}
+
+function buildBrandWaterfall(cfg) {
+  const canvas = document.getElementById(cfg.waterfallId);
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio||1;
+  const w = canvas.offsetWidth||400; const h = 200;
+  canvas.width=w*dpr; canvas.height=h*dpr;
+  canvas.style.width=w+'px'; canvas.style.height=h+'px';
+  const ctx = canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  const items = cfg.wfItems;
+  const maxV = cfg.wfMax;
+  const pad={t:16,r:16,b:42,l:52}; const cw=w-pad.l-pad.r; const ch=h-pad.t-pad.b;
+  ctx.font='10px '+getComputedStyle(document.body).fontFamily;
+  ctx.fillStyle='#9099b5'; ctx.textAlign='right';
+  for(let i=0;i<=4;i++){
+    const v=maxV*i/4; const y=pad.t+ch-ch*i/4;
+    ctx.globalAlpha=.4; ctx.strokeStyle='rgba(0,0,0,.07)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
+    ctx.globalAlpha=1; ctx.fillText((v/1000).toFixed(0)+'B',pad.l-4,y+4);
+  }
+  const bw=(cw/items.length)*.6; const gap=(cw/items.length)*.4/2;
+  items.forEach((item,i)=>{
+    const x=pad.l+i*(cw/items.length)+gap;
+    let barH,barY;
+    if(item.abs){barH=ch*item.v/maxV; barY=pad.t+ch-barH;}
+    else{barH=ch*Math.abs(item.v)/maxV; barY=pad.t+ch-ch*Math.max(item.base,item.base+item.v)/maxV;}
+    ctx.fillStyle=item.c; roundRect(ctx,x,barY,bw,Math.max(2,barH),3);
+    ctx.fillStyle='#6b7491'; ctx.textAlign='center'; ctx.font='9px '+getComputedStyle(document.body).fontFamily;
+    ctx.fillText((item.v>0?'+':'')+(item.v/1000).toFixed(1)+'B',x+bw/2,barY-4);
+    item.l.split('\n').forEach((ln,li)=>ctx.fillText(ln,x+bw/2,pad.t+ch+12+li*11));
+  });
+}
+
+function buildBrandCat(cfg) {
+  drawHBar(cfg.catId, cfg.catLabels, cfg.catData, cfg.catColors);
+}
+
+function buildColoredBarChart(id, labels, d25, d26, h) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  const dpr=window.devicePixelRatio||1;
+  const w=canvas.offsetWidth||canvas.parentElement.clientWidth||400;
+  canvas.width=w*dpr; canvas.height=h*dpr;
+  canvas.style.width=w+'px'; canvas.style.height=h+'px';
+  const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  const pad={t:16,r:16,b:64,l:60}; const cw=w-pad.l-pad.r; const ch=h-pad.t-pad.b;
+  const maxV=Math.max(...d25,...d26)*1.12; const gridLines=4;
+  ctx.font='10px '+getComputedStyle(document.body).fontFamily;
+  ctx.fillStyle='#9099b5'; ctx.textAlign='right';
+  for(let i=0;i<=gridLines;i++){
+    const v=maxV*i/gridLines; const y=pad.t+ch-ch*i/gridLines;
+    ctx.globalAlpha=.5; ctx.strokeStyle='rgba(0,0,0,.07)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
+    ctx.globalAlpha=1; ctx.fillText(v.toLocaleString(),pad.l-4,y+4);
+  }
+  const groupW=cw/labels.length; const bw=groupW*.35;
+  labels.forEach((l,i)=>{
+    const gx=pad.l+i*groupW;
+    ctx.fillStyle='rgba(160,168,190,.4)';
+    roundRect(ctx,gx+groupW*.08,pad.t+ch-ch*d25[i]/maxV,bw,ch*d25[i]/maxV,3);
+    ctx.fillStyle=d26[i]>=d25[i]?'rgba(26,128,64,.75)':'rgba(200,40,40,.75)';
+    roundRect(ctx,gx+groupW*.08+bw+2,pad.t+ch-ch*d26[i]/maxV,bw,ch*d26[i]/maxV,3);
+    // x label — 45도 회전
+    ctx.save();
+    ctx.fillStyle='#9099b5';
+    ctx.font='10px '+getComputedStyle(document.body).fontFamily;
+    ctx.textAlign='right';
+    ctx.textBaseline='middle';
+    ctx.translate(gx+groupW/2, pad.t+ch+10);
+    ctx.rotate(-Math.PI/4);
+    ctx.fillText(l, 0, 0);
+    ctx.restore();
+  });
+}
+
+/* ── 히어로 분석 데이터 ── */
+const heroCfg = {
+  tabsId:'heroTabs', viewChId:'heroViewCh', viewSkuId:'heroViewSku',
+  chYoyId:'cHeroChYoy', donutId:'cHeroDonut', donutLegendId:'heroDonutLegend',
+  waterfallId:'cHeroWaterfall', catId:'cHeroCat',
+  chDetailId:'heroChDetail', chCatMatrixId:'heroChCatMatrix',
+  skuNewId:'heroSkuNew', skuLostId:'heroSkuLost', skuCommonId:'heroSkuCommon',
+
+  chLabels: ['CIS권','동유럽권','중국권','Global권','동남아권','북미권','기타유럽권','쿠팡'],
+  ch25: [2690, 891, 218, 256, 271, 588, 173, 0],
+  ch26: [4663, 428, 332, 328, 243, 216, 176, 159],
+
+  dnLabels: ['CIS권','자사몰','기타 외부몰','동남아권','중국권','Global권','동유럽권','쿠팡'],
+  dnData:   [4663, 428, 332, 328, 243, 216, 176, 537],
+  dnColors: ['#3b6ef5','#fb923c','#0ea97e','#7c5ce8','#f05050','#d98b10','#9099b5'],
+
+  chRows: [
+    { n:'CIS권',    v26:4509, v25:2690, cat:'기초케어 91%', topSku:['펩타이드9볼륨앤텐션톡스크림프로','피토이엑스피디알엔리프팅샷크림','펩타이드9볼륨톡스크림프로'] },
+    { n:'중국권',   v26:328,  v25:218,  cat:'마스크팩+기초케어', topSku:['펩타이드9볼륨리프팅마스크(중문라벨)','펩타이드9볼륨올인원에센스프로','펩타이드9볼륨앤텐션톡스크림프로'] },
+    { n:'동유럽권', v26:428,  v25:891,  cat:'기초케어 83%', topSku:['펩타이드9프리미엄스킨케어세트','히알루론다크베논펩타이드9아이패치','펩타이드9볼륨바이오톡스앰플프로'] },
+    { n:'동남아권', v26:227,  v25:271,  cat:'기초케어 92%', topSku:['펩타이드9볼륨앤텐션톡스크림프로','펩타이드9볼륨올인원에센스프로','펩타이드9볼륨바이오톡스앰플프로'] },
+    { n:'북미권',   v26:211,  v25:588,  cat:'선케어 63%', topSku:['펩타이드9바이오선스틱프로(OTC)','펩타이드9볼륨올인원에센스프로','펩타이드9볼륨리프톡스아이크림'] },
+    { n:'외부몰',   v26:187,  v25:118,  cat:'기초케어 83%', topSku:['펩타이드9볼륨올인원에센스프로','펩타이드9볼륨앤텐션톡스크림프로','펩타이드9볼륨바이오톡스앰플프로'] },
+    { n:'Global권', v26:173,  v25:256,  cat:'기초케어 위주', topSku:['펩타이드9볼륨앤텐션톡스크림프로','펩타이드9볼륨올인원에센스프로','펩타이드9볼륨리프팅올인원에센스프로'] },
+    { n:'자사몰',   v26:131,  v25:27,   cat:'선케어(선스틱) 70%', topSku:['펩타이드9바이오선스틱프로_19g','펩타이드9볼륨리프팅아이패치프로','펩타이드9볼륨올인원에센스프로'] },
+  ],
+
+  matrixData: [
+    { ch:'CIS권',    기초케어:3737, 마스크팩:257, 선케어:16,  클렌징:96 },
+    { ch:'중국권',   기초케어:177,  마스크팩:116, 선케어:1,   클렌징:1  },
+    { ch:'동유럽권', 기초케어:231,  마스크팩:43,  선케어:3,   클렌징:1  },
+    { ch:'동남아권', 기초케어:197,  마스크팩:10,  선케어:4,   클렌징:2  },
+    { ch:'북미권',   기초케어:64,   마스크팩:7,   선케어:133, 클렌징:8  },
+    { ch:'외부몰',   기초케어:151,  마스크팩:21,  선케어:10,  클렌징:0  },
+  ],
+  matrixCats: ['기초케어','마스크팩','선케어','클렌징'],
+  matrixCatColors: {'기초케어':'#3b6ef5','마스크팩':'#0ea97e','선케어':'#fb923c','클렌징':'#7c5ce8'},
+
+  wfItems: [
+    { l:'25년\nHero',  v:7568,  base:0,    c:'rgba(160,168,190,.55)', abs:true },
+    { l:'소멸\nSKU',   v:-329,  base:7568, c:'rgba(200,40,40,.7)',   abs:false },
+    { l:'공통\nSKU\n하락', v:-2307, base:7239, c:'rgba(200,40,40,.5)', abs:false },
+    { l:'신규\nSKU',   v:2390,  base:4932, c:'rgba(26,128,64,.75)', abs:false },
+    { l:'26년\nHero',  v:7321,  base:0,    c:'rgba(59,110,245,.75)', abs:true },
+  ],
+  wfMax: 7500,
+
+  catLabels: ['기초케어·로션/크림','기초케어·에센스/세럼','기초케어·스페셜케어','기초케어·앰플/오일','기초케어·토너/미스트','마스크팩·패드','선케어','클렌징'],
+  catData:   [2206, 840, 725, 614, 518, 376, 263, 111],
+  catColors: ['#3b6ef5','#3b6ef5','#3b6ef5','#3b6ef5','#3b6ef5','#0ea97e','#fb923c','#7c5ce8'],
+
+  newSkus: [
+    {n:'펩타이드9볼륨올인원에센스프로(N)_100ml',    v:455, ch:'CIS권'},
+    {n:'피토이엑스피디알엔리프팅샷크림_50g(CPNP)',  v:375, ch:'CIS권'},
+    {n:'피토이엑스피디알엔리프팅샷드롭겔크림_50g',  v:206, ch:'CIS권'},
+    {n:'펩타이드9볼륨리프팅올인원에센스프로(N)',     v:182, ch:'CIS권'},
+    {n:'피토엑소좀피디알엔리프팅샷크림(N)_50g',     v:145, ch:'CIS권'},
+    {n:'피토이엑스피디알엔리프팅샷아이크림(CPNP)',   v:107, ch:'CIS권'},
+    {n:'펩타이드9볼륨리프팅마스크(중문라벨)',        v:102, ch:'중국권'},
+    {n:'피토엑소좀피디알엔리프팅샷미스트(N)_120ml', v:87,  ch:'CIS권'},
+  ],
+  lostSkus: [
+    {n:'피토엑소좀피디알엔리프팅샷크림(50g)',       v:181, ch:'CIS권'},
+    {n:'피토엑소좀피디알엔리프팅샷크림(50g)',       v:15,  ch:'북미권'},
+    {n:'피토엑소좀피디알엔리프팅샷크림(50g)',       v:9,   ch:'동남아권'},
+    {n:'펩타이드9볼륨앤텐션톡스크림프로(50g)',      v:4,   ch:'동남아권'},
+    {n:'펩타이드9볼륨리프팅마스크(위생허가)',        v:2,   ch:'동남아권'},
+    {n:'펩타이드9볼륨톡스크림프로(1.5g)',           v:2,   ch:'CIS권'},
+  ],
+  commonRows: [
+    {n:'펩타이드9볼륨앤텐션톡스크림프로(N)_50g',      v26:789, v25:639},
+    {n:'펩타이드9볼륨톡스크림프로_50g',                v26:433, v25:395},
+    {n:'펩타이드9아쿠아에센스에멀젼_250ml',             v26:325, v25:170},
+    {n:'펩타이드9볼륨바이오톡스앰플프로_100ml',         v26:284, v25:242},
+    {n:'펩타이드9볼륨리프톡스아이크림(N)_20ml',        v26:244, v25:215},
+    {n:'펩타이드9히알루로닉볼류미아이크림_40ml',        v26:213, v25:261},
+    {n:'펩타이드9아쿠아에센스토너_250ml',               v26:211, v25:143},
+    {n:'펩타이드9비타놀크림프로_50g',                   v26:197, v25:168},
+    {n:'피토엑소좀피디알엔리프팅샷앰플_100ml',          v26:184, v25:63},
+    {n:'히알루론다크베논펩타이드9앰플아이패치_60ea',    v26:153, v25:224},
+  ],
+};
+
+/* ── 챔피언 분석 데이터 ── */
+const champCfg = {
+  tabsId:'champTabs', viewChId:'champViewCh', viewSkuId:'champViewSku',
+  chYoyId:'cChampChYoy', donutId:'cChampDonut', donutLegendId:'champDonutLegend',
+  waterfallId:'cChampWaterfall', catId:'cChampCat',
+  chDetailId:'champChDetail', chCatMatrixId:'champChCatMatrix',
+  skuNewId:'champSkuNew', skuLostId:'champSkuLost', skuCommonId:'champSkuCommon',
+
+  chLabels: ['올리브영','공구','홈쇼핑','일본권','쿠팡','CIS권','동남아권','중국권'],
+  ch25: [1524, 1405, 1383, 147, 0, 492, 781, 318],
+  ch26: [1446, 1178, 908,  793, 644, 573, 463, 314],
+
+  dnLabels: ['공구','올리브영','자사몰','홈쇼핑','CIS권','쿠팡','일본권','네이버 외'],
+  dnData:   [1446, 1178, 908, 793, 644, 573, 463, 480],
+  dnColors: ['#f05050','#3b6ef5','#d98b10','#7c5ce8','#fb923c','#0ea97e','#e8650a','#9099b5'],
+
+  chRows: [
+    { n:'올리브영', v26:1446, v25:1524, cat:'클렌징+생활케어', topSku:['레드락토콜라겐클리어폼클렌저2.0세트','레드락토콜라겐랩핑마스크기획세트(N2)','EGF스케일링모이스처풋크림(올영)'] },
+    { n:'공구',    v26:1178, v25:1405, cat:'기초케어+마스크팩', topSku:['멜라논엑스크림2.0','콜라겐물광랩핑마스크'] },
+    { n:'외부몰',  v26:991,  v25:784,  cat:'기초케어+클렌징', topSku:['멜라논엑스크림','레드락토콜라겐클리어폼클렌저2.0','EGF스케일링모이스처풋크림'] },
+    { n:'홈쇼핑',  v26:832,  v25:1383, cat:'기초케어 79%', topSku:['멜라논엑스앰플알엑스(홈쇼핑)','멜라논엑스앰플알엑스','멜라논엑스앰플알엑스홈쇼핑F세트'] },
+    { n:'일본권',  v26:771,  v25:147,  cat:'넥스틱 77%', topSku:['프리미엄펩타이드나이테1000샷넥스틱2.0(세키도)','프리미엄콜라겐나이테실넥크림3.0(세키도)','프리미엄콜라겐나이테실넥크림3.0'] },
+    { n:'CIS권',   v26:484,  v25:492,  cat:'기초케어 73%', topSku:['프리미엄콜라겐나이테실넥크림3.0','프리미엄펩타이드나이테1000샷넥스틱2.0','멜라논엑스크림'] },
+    { n:'동남아권',v26:437,  v25:781,  cat:'넥+기초케어', topSku:['프리미엄콜라겐나이테실넥크림3.0','프리미엄펩타이드나이테1000샷넥스틱2.0','멜라논엑스크림2.0'] },
+    { n:'중국권',  v26:306,  v25:318,  cat:'넥스틱+기초케어', topSku:['프리미엄펩타이드나이테1000샷넥스틱2.0','프리미엄콜라겐나이테실넥크림3.0','멜라논엑스크림2.0'] },
+  ],
+
+  matrixData: [
+    { ch:'올리브영', 기초케어:4,   마스크팩:418, 클렌징:674, 생활케어:343 },
+    { ch:'공구',    기초케어:630, 마스크팩:548, 클렌징:0,   생활케어:0   },
+    { ch:'외부몰',  기초케어:363, 마스크팩:139, 클렌징:373, 생활케어:106 },
+    { ch:'홈쇼핑',  기초케어:661, 마스크팩:8,   클렌징:17,  생활케어:3   },
+    { ch:'일본권',  기초케어:721, 마스크팩:45,  클렌징:4,   생활케어:0   },
+    { ch:'CIS권',   기초케어:353, 마스크팩:93,  클렌징:36,  생활케어:2   },
+  ],
+  matrixCats: ['기초케어','마스크팩','클렌징','생활케어'],
+  matrixCatColors: {'기초케어':'#3b6ef5','마스크팩':'#0ea97e','클렌징':'#7c5ce8','생활케어':'#fb923c'},
+
+  wfItems: [
+    { l:'25년\nChamp', v:8103,  base:0,    c:'rgba(160,168,190,.55)', abs:true },
+    { l:'소멸\nSKU',   v:-649,  base:9875, c:'rgba(200,40,40,.7)',   abs:false },
+    { l:'공통\nSKU\n하락', v:-6445, base:9226, c:'rgba(200,40,40,.5)', abs:false },
+    { l:'신규\nSKU',   v:4790,  base:2781, c:'rgba(26,128,64,.75)', abs:false },
+    { l:'26년\nChamp', v:7571,  base:0,    c:'rgba(232,101,10,.75)', abs:true },
+  ],
+  wfMax: 9500,
+
+  catLabels: ['기초케어·스페셜케어','마스크팩·필오프','기초케어·로션/크림','클렌징·클렌저','생활케어·핸드/풋','기초케어·앰플/오일','소프트번들','기타'],
+  catData:   [1502, 1478, 1302, 1219, 744, 669, 143, 107],
+  catColors: ['#3b6ef5','#0ea97e','#3b6ef5','#7c5ce8','#fb923c','#3b6ef5','#9099b5','#d98b10'],
+
+  newSkus: [
+    {n:'멜라논엑스크림2.0_30ml',                   v:786, ch:'공구'},
+    {n:'프리미엄펩타이드나이테1000샷넥스틱2.0(세키도)',v:606, ch:'일본권'},
+    {n:'콜라겐물광랩핑마스크_100ml',                v:575, ch:'공구'},
+    {n:'멜라논엑스앰플알엑스_30mlx2ea(홈쇼핑)',     v:412, ch:'홈쇼핑'},
+    {n:'레드락토콜라겐랩핑마스크기획세트(N2)(올영)', v:364, ch:'올리브영'},
+    {n:'프리미엄콜라겐나이테실넥크림3.0(N)_100ml',  v:562, ch:'CIS권'},
+    {n:'그린시카콜라겐클리어젤클렌저2.0세트(올영)',  v:232, ch:'올리브영'},
+    {n:'프리미엄펩타이드나이테1000샷넥스틱2.0(N)',  v:305, ch:'해외'},
+  ],
+  lostSkus: [
+    {n:'그린시카콜라겐클리어2.0키트(올영)_300ml',  v:242, ch:'올리브영'},
+    {n:'프리미엄펩타이드나이테1000샷넥스틱_20g',   v:60,  ch:'CIS권'},
+    {n:'레드락토콜라겐클리어2.0_300ml',            v:52,  ch:'홈쇼핑'},
+    {n:'M.D.P+레드락토콜라겐클리어2.0_120ml',     v:29,  ch:'홈쇼핑'},
+    {n:'프리미엄펩타이드나이테1000샷넥스틱(동남아)',v:22,  ch:'동남아권'},
+    {n:'레드락토콜라겐랩핑마스크기획세트(올영)',    v:21,  ch:'올리브영'},
+  ],
+  commonRows: [
+    {n:'멜라논엑스크림_30ml',                          v26:463, v25:933},
+    {n:'레드락토콜라겐클리어폼클렌저2.0세트(N3)_300ml', v26:441, v25:429},
+    {n:'EGF스케일링모이스처풋크림_130g(올영)',          v26:326, v25:131},
+    {n:'EGF스케일링모이스처풋크림_130g(군납)',          v26:204, v25:26},
+    {n:'레드락토콜라겐랩핑마스크(N)_70ml',              v26:163, v25:777},
+    {n:'레드락토콜라겐클리어폼클렌저2.0(N)_300ml',     v26:162, v25:217},
+    {n:'EGF스케일링모이스처풋크림(N)_130g',            v26:137, v25:187},
+    {n:'레드락토콜라겐랩핑마스크_70ml',                 v26:104, v25:859},
+    {n:'레드락토콜라겐랩핑마스크세트(브러쉬)_코스트코', v26:91,  v25:139},
+    {n:'레드락토콜라겐클리어폼클렌저2.0(N3)_300ml',    v26:86,  v25:133},
+  ],
+};
+
+// 레이아웃 완성 후 렌더
+window.addEventListener('load', initAll);
+window.addEventListener('resize', () => {
+  drawTrend(); drawChannel(); drawChYoyColored();
+  if (document.getElementById('viewSku').style.display !== 'none') {
+    drawSkuWaterfall(); drawCat();
+  }
+});
+
+
+/* ── GP 심층 분석 ── */
+function buildGPAnalysis() {
+  // ① GP 폭포 차트
+  (function() {
+    const canvas = document.getElementById('cGPWaterfall');
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio||1;
+    const w = canvas.offsetWidth||400; const h = 210;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    const ctx = canvas.getContext('2d'); ctx.scale(dpr,dpr);
+    const items = [
+      {l:'25년\nGP',    v:16710, base:0,     c:'rgba(160,168,190,.55)', abs:true},
+      {l:'소멸\nSKU',   v:-2277, base:16710, c:'rgba(200,40,40,.7)',    abs:false},
+      {l:'공통SKU\n하락', v:-6312, base:14433, c:'rgba(200,40,40,.5)', abs:false},
+      {l:'신규\nSKU',   v:6045,  base:8121,  c:'rgba(43,168,74,.8)',   abs:false},
+      {l:'26년\nGP',    v:14166, base:0,     c:'rgba(43,168,74,.55)',  abs:true},
+    ];
+    const maxV = 18000;
+    const pad={t:20,r:16,b:44,l:52}; const cw=w-pad.l-pad.r; const ch=h-pad.t-pad.b;
+    ctx.font='10px '+getComputedStyle(document.body).fontFamily;
+    ctx.fillStyle='#9099b5'; ctx.textAlign='right';
+    for(let i=0;i<=4;i++){
+      const v=maxV*i/4; const y=pad.t+ch-ch*i/4;
+      ctx.globalAlpha=.4; ctx.strokeStyle='rgba(0,0,0,.07)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
+      ctx.globalAlpha=1; ctx.fillText((v/1000).toFixed(0)+'B',pad.l-4,y+4);
+    }
+    const bw=(cw/items.length)*.58; const gap=(cw/items.length)*.42/2;
+    items.forEach((item,i)=>{
+      const x=pad.l+i*(cw/items.length)+gap;
+      let barH, barY;
+      if(item.abs){barH=ch*item.v/maxV; barY=pad.t+ch-barH;}
+      else{barH=ch*Math.abs(item.v)/maxV; barY=pad.t+ch-ch*Math.max(item.base,item.base+item.v)/maxV;}
+      ctx.fillStyle=item.c; roundRect(ctx,x,barY,bw,Math.max(2,barH),3);
+      ctx.fillStyle='#5a6280'; ctx.textAlign='center'; ctx.font='9px '+getComputedStyle(document.body).fontFamily;
+      const label = item.v>=0 ? '+'+( item.v/1000).toFixed(1)+'B' : (item.v/1000).toFixed(1)+'B';
+      ctx.fillText(label, x+bw/2, barY-5);
+      item.l.split('\n').forEach((ln,li)=>ctx.fillText(ln,x+bw/2,pad.t+ch+12+li*11));
+    });
+  })();
+
+  // ② 브랜드별 GPM 추이 (라인)
+  (function() {
+    const canvas = document.getElementById('cGPMTrend');
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio||1;
+    const w = canvas.offsetWidth||400; const h = 220;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    const ctx = canvas.getContext('2d'); ctx.scale(dpr,dpr);
+    const months=['1월','2월','3월','4월'];
+    const lines=[
+      {label:'Hero',    c26:[52.4,57.1,58.6,54.6], c25:[56.0,57.2,53.9,null], color:'#3b6ef5'},
+      {label:'Champion',c26:[71.8,73.5,75.5,71.3], c25:[77.4,73.3,75.3,null], color:'#e8650a'},
+      {label:'다이소',  c26:[38.5,39.9,41.4,40.7], c25:[27.8,30.9,29.6,null], color:'#0ea97e'},
+      {label:'기타',    c26:[55.9,56.8,60.6,48.3], c25:[64.1,56.7,62.8,null], color:'#7c5ce8'},
+    ];
+    const legH = 20;
+    const pad={t:24,r:16,b:30+legH,l:44};
+    const cw=w-pad.l-pad.r; const ch=h-pad.t-pad.b;
+    const allV=[...lines.flatMap(l=>[...l.c26,...l.c25])];
+    const minV=Math.floor(Math.min(...allV)/5)*5-5;
+    const maxV=Math.ceil(Math.max(...allV)/5)*5+5;
+    const toY=v=>pad.t+ch-ch*(v-minV)/(maxV-minV);
+    const toX=i=>pad.l+i*(cw/2);
+    const font = getComputedStyle(document.body).fontFamily;
+
+    // grid
+    ctx.font='10px '+font;
+    for(let v=minV;v<=maxV;v+=10){
+      const y=toY(v);
+      ctx.globalAlpha=.4; ctx.strokeStyle='rgba(0,0,0,.07)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
+      ctx.globalAlpha=1; ctx.fillStyle='#9099b5'; ctx.textAlign='right';
+      ctx.fillText(v+'%',pad.l-4,y+4);
+    }
+
+    // x axis
+    months.forEach((m,i)=>{
+      ctx.fillStyle='#9099b5'; ctx.textAlign='center'; ctx.font='10px '+font;
+      ctx.fillText(m,toX(i),pad.t+ch+14);
+    });
+
+    // 25년 점선 먼저 (모든 라인)
+    lines.forEach(line=>{
+      ctx.strokeStyle=line.color; ctx.lineWidth=1.2; ctx.setLineDash([4,3]); ctx.globalAlpha=.3;
+      ctx.beginPath();
+      line.c25.forEach((v,i)=>{ i===0?ctx.moveTo(toX(i),toY(v)):ctx.lineTo(toX(i),toY(v)); });
+      ctx.stroke();
+    });
+    ctx.globalAlpha=1; ctx.setLineDash([]);
+
+    // 26년 실선 + 점 (모든 라인)
+    lines.forEach(line=>{
+      ctx.strokeStyle=line.color; ctx.lineWidth=2.2; ctx.setLineDash([]);
+      ctx.beginPath();
+      line.c26.forEach((v,i)=>{ i===0?ctx.moveTo(toX(i),toY(v)):ctx.lineTo(toX(i),toY(v)); });
+      ctx.stroke();
+      line.c26.forEach((v,i)=>{
+        ctx.fillStyle=line.color;
+        ctx.beginPath(); ctx.arc(toX(i),toY(v),3.5,0,Math.PI*2); ctx.fill();
+      });
+    });
+
+    // 값 레이블: 각 월(column)별로 y값 기준 정렬 후 겹치지 않게 위/아래 배치
+    ctx.font='bold 9px '+font;
+    const labelH = 11; // 레이블 높이 간격
+    for(let col=0; col<3; col++){
+      // 해당 열의 모든 라인 y값 수집
+      const pts = lines.map(line=>({
+        color: line.color,
+        val: line.c26[col],
+        y: toY(line.c26[col]),
+        x: toX(col),
+      })).sort((a,b)=>a.y-b.y); // y 오름차순 (위부터)
+
+      // 각 점의 레이블 위치 결정: 위 or 아래, 겹치면 밀어내기
+      const placed = []; // {y: labelY}
+      pts.forEach(pt=>{
+        // 기본: 점 위
+        let ly = pt.y - 9;
+        // 위에 이미 레이블 있으면 아래로
+        const conflict = placed.some(p=>Math.abs(p.y - ly) < labelH);
+        if(conflict) ly = pt.y + 10;
+        // 아래도 충돌이면 더 밀기
+        const conflict2 = placed.some(p=>Math.abs(p.y - ly) < labelH);
+        if(conflict2) ly = pt.y - 9 - labelH;
+
+        placed.push({y:ly});
+        ctx.fillStyle = pt.color;
+        ctx.textAlign = 'center';
+        ctx.fillText(pt.val.toFixed(1)+'%', pt.x, ly);
+      });
+    }
+
+    // 하단 범례
+    const legY = h - 10;
+    const legItems = [
+      {label:'Hero',    color:'#3b6ef5'},
+      {label:'Champion',color:'#e8650a'},
+      {label:'기타',    color:'#7c5ce8'},
+      {label:'다이소',  color:'#0ea97e'},
+      {label:'25년 (점선)', color:'#9099b5', dash:true},
+    ];
+    ctx.font='9px '+font;
+    // 범례 전체 너비 계산 → 가운데 정렬
+    const totalLegW = legItems.reduce((s,item)=>s+ctx.measureText(item.label).width+26, 0);
+    let legX = (w - totalLegW) / 2;
+    legItems.forEach(item=>{
+      ctx.strokeStyle=item.color; ctx.lineWidth=item.dash?1.2:2;
+      ctx.setLineDash(item.dash?[4,3]:[]);
+      ctx.globalAlpha=item.dash?.45:1;
+      ctx.beginPath(); ctx.moveTo(legX,legY); ctx.lineTo(legX+14,legY); ctx.stroke();
+      ctx.setLineDash([]); ctx.globalAlpha=1;
+      if(!item.dash){
+        ctx.fillStyle=item.color;
+        ctx.beginPath(); ctx.arc(legX+7,legY,2.5,0,Math.PI*2); ctx.fill();
+      }
+      ctx.fillStyle='#6b7491'; ctx.textAlign='left';
+      ctx.fillText(item.label, legX+17, legY+3.5);
+      legX += ctx.measureText(item.label).width + 26;
+    });
+  })();
+
+  // ③ 채널별 GP 테이블
+  const chRows=[
+    {ch:'CIS권',      gp26:4812, gpm26:57.9, gp25:4029, gpm25:57.5},
+    {ch:'올리브영',   gp26:1154, gpm26:63.0, gp25:1196, gpm25:59.7},
+    {ch:'다이소',     gp26:1098, gpm26:39.9, gp25:1111, gpm25:29.6},
+    {ch:'공구',       gp26:961,  gpm26:81.5, gp25:1023, gpm25:72.5},
+    {ch:'홈쇼핑',     gp26:818,  gpm26:86.7, gp25:1316, gpm25:87.7},
+    {ch:'일본권',     gp26:768,  gpm26:79.4, gp25:200,  gpm25:89.3},
+    {ch:'동남아권',   gp26:737,  gpm26:59.3, gp25:1469, gpm25:69.6},
+    {ch:'중국권',     gp26:712,  gpm26:59.6, gp25:1561, gpm25:53.3},
+  ];
+  document.getElementById('gpChannelBody').innerHTML = chRows.map(r=>{
+    const gd=r.gpm26-r.gpm25; const gc=gd>=0?'#1a8040':'#c0202f';
+    const dd=r.gp26-r.gp25; const dc=dd>=0?'#1a8040':'#c0202f';
+    return `<tr>
+      <td style="font-weight:600">${r.ch}</td>
+      <td>${r.gp26.toLocaleString()}</td>
+      <td style="color:#2ba84a;font-weight:600">${r.gpm26.toFixed(1)}%</td>
+      <td style="color:#9099b5">${r.gpm25.toFixed(1)}%</td>
+      <td style="color:${gc};font-weight:600">${gd>=0?'▲ +':'▼ '}${Math.abs(gd).toFixed(1)}%p</td>
+      <td style="color:${dc};font-weight:600">${dd>=0?'+':''}${dd.toLocaleString()}</td>
+    </tr>`;
+  }).join('');
+
+  // ④ 카테고리별 GP 테이블
+  const catRows=[
+    {cat:'기초케어',   gp26:8429, gpm26:62.3, gp25:null, gpm25:null},
+    {cat:'마스크팩',   gp26:2349, gpm26:57.1, gp25:4981, gpm25:58.1},
+    {cat:'클렌징',     gp26:1415, gpm26:60.3, gp25:1818, gpm25:58.2},
+    {cat:'생활케어',   gp26:443,  gpm26:53.1, gp25:null, gpm25:null},
+    {cat:'선케어',     gp26:146,  gpm26:38.4, gp25:488,  gpm25:47.7},
+    {cat:'소프트번들', gp26:146,  gpm26:100.0,gp25:null, gpm25:null},
+  ];
+  document.getElementById('gpCatBody').innerHTML = catRows.map(r=>{
+    const gd = r.gpm25 ? r.gpm26-r.gpm25 : null;
+    const gc = gd===null?'#9099b5':gd>=0?'#1a8040':'#c0202f';
+    return `<tr>
+      <td style="font-weight:600">${r.cat}</td>
+      <td>${r.gp26.toLocaleString()}</td>
+      <td style="color:#2ba84a;font-weight:600">${r.gpm26.toFixed(1)}%</td>
+      <td style="color:#9099b5">${r.gpm25?r.gpm25.toFixed(1)+'%':'—'}</td>
+      <td style="color:${gc};font-weight:600">${gd===null?'—':((gd>=0?'▲ +':'▼ ')+Math.abs(gd).toFixed(1)+'%p')}</td>
+    </tr>`;
+  }).join('');
+
+  // ⑤ SKU GPM 하락 TOP10
+  const skuDrop=[
+    {n:'메조콜라겐토너_1,000ml',         br:'기타',   gpm25:74, gpm26:50, diff:-24, gp:21},
+    {n:'엑스트라슈퍼9플러스2.0_250ml',   br:'기타',   gpm25:81, gpm26:62, diff:-19, gp:32},
+    {n:'럭셔리24케이골드앰플_100ml',      br:'기타',   gpm25:42, gpm26:29, diff:-13, gp:39},
+    {n:'멜라논엑스드롭겔크림_50g',        br:'챔피언', gpm25:63, gpm26:51, diff:-12, gp:38},
+    {n:'펩타이드9볼륨바이오톡스트라이얼키트',br:'히어로',gpm25:54, gpm26:42, diff:-11, gp:14},
+    {n:'펩타이드9바이오선스틱프로_19g',   br:'히어로', gpm25:50, gpm26:41, diff:-9,  gp:50},
+    {n:'레드락토콜라겐포어리프팅마스크(다이소)',br:'기타',gpm25:60,gpm26:51,diff:-9, gp:28},
+    {n:'레드락토콜라겐클렌징오일2.0_200ml',br:'기타',  gpm25:77, gpm26:69, diff:-9,  gp:24},
+    {n:'레드락토콜라겐클리어폼클렌저(N3)', br:'챔피언', gpm25:74, gpm26:68, diff:-7,  gp:31},
+    {n:'비타민멜라토닝랩핑마스크(다이소)', br:'챔피언', gpm25:47, gpm26:41, diff:-6,  gp:24},
+  ];
+  const brColor={히어로:'#3b6ef5',챔피언:'#e8650a',기타:'#7c5ce8'};
+  const mkSkuRow = (r, isRise) => {
+    const dc = isRise ? '#1a8040' : '#c0202f';
+    const arrow = isRise ? '▲ +' : '▼ ';
+    return `<tr>
+      <td style="font-size:11px;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.n}</td>
+      <td><span style="font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(0,0,0,.06);color:${brColor[r.br]||'#666'};font-weight:600">${r.br}</span></td>
+      <td style="color:${dc};font-weight:700">${arrow}${Math.abs(r.diff)}%p</td>
+      <td style="color:#2ba84a;font-weight:600">${r.gpm26}%</td>
+      <td style="color:var(--text2)">${r.gp}</td>
+    </tr>`;
+  };
+  document.getElementById('gpSkuDropBody').innerHTML = skuDrop.map(r=>mkSkuRow(r,false)).join('');
+
+  const skuRise=[
+    {n:'엑스트라슈퍼9플러스3X기획세트(올영)', br:'기타',   gpm25:31,  gpm26:65,  diff:34, gp:95},
+    {n:'엑스트라슈퍼9랩핑마스크(다이소)',     br:'챔피언', gpm25:29,  gpm26:50,  diff:22, gp:81},
+    {n:'레드락토콜라겐랩핑마스크세트(코스트코)',br:'챔피언',gpm25:77,  gpm26:91,  diff:15, gp:83},
+    {n:'마이크로티파우더클렌저_70g',          br:'기타',   gpm25:33,  gpm26:46,  diff:13, gp:78},
+    {n:'락토모공리프팅랩핑마스크(다이소)',    br:'챔피언', gpm25:37,  gpm26:50,  diff:12, gp:33},
+    {n:'펩타이드9바이오선스틱프로(OTC)',      br:'히어로', gpm25:40,  gpm26:51,  diff:11, gp:67},
+    {n:'프리미엄콜라겐나이테실넥크림2.0',     br:'챔피언', gpm25:60,  gpm26:70,  diff:10, gp:24},
+    {n:'엑스트라슈퍼9피지클리너코시트(다이소)',br:'기타',   gpm25:10,  gpm26:23,  diff:13, gp:10},
+  ];
+  document.getElementById('gpSkuRiseBody').innerHTML = skuRise.map(r=>mkSkuRow(r,true)).join('');
+}
+/* ── 사이드바 네비게이션 ── */
+document.querySelectorAll('.nav-item[data-sec]').forEach(item => {
+  item.addEventListener('click', () => {
+    const secId = item.dataset.sec;
+    const target = document.getElementById(secId);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    // active 상태 업데이트
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    // 같은 data-sec을 가진 첫 번째 항목만 active
+    document.querySelector(`.nav-item[data-sec="${secId}"]`)?.classList.add('active');
+  });
+});
+
+// 스크롤 감지 → active 자동 업데이트
+const secMap = [
+  ['sec-summary',  'sec-summary'],
+  ['sec-gp',       'sec-gp'],
+  ['sec-channel',  'sec-channel'],
+  ['sec-hero',     'sec-hero'],
+  ['sec-champion', 'sec-champion'],
+  ['sec-other',    'sec-other'],
+  ['sec-insight',  'sec-insight'],
+];
+const main = document.querySelector('.main');
+if (main) {
+  main.addEventListener('scroll', () => {
+    const scrollTop = main.scrollTop + 80;
+    let current = 'sec-summary';
+    secMap.forEach(([id]) => {
+      const el = document.getElementById(id);
+      if (el && el.offsetTop <= scrollTop) current = id;
+    });
+    document.querySelectorAll('.nav-item').forEach(i => {
+      i.classList.toggle('active', i.dataset.sec === current);
+    });
+  }, { passive: true });
+}
+
+</script>
+</body>
+</html>

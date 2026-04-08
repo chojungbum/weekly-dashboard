@@ -5,23 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>주간 실적 대시보드</title>
 <style>
-:root {
-  --bg:#f4f6fb;--bg2:#ffffff;--bg3:#f0f2f8;--bg4:#e4e8f2;
-  --border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.14);
-  --text:#1a2035;--text2:#4a5470;--text3:#9099b5;
-  --accent:#3b6ef5;--teal:#0ea97e;--red:#e03c3c;
-  --amber:#d98b10;--green:#2ba84a;--purple:#7c5ce8;--coral:#e8650a;
-  --font:-apple-system,'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',sans-serif;
-}
+:root{--bg:#f4f6fb;--bg2:#ffffff;--bg3:#f0f2f8;--bg4:#e4e8f2;--border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.14);--text:#1a2035;--text2:#4a5470;--text3:#9099b5;--accent:#3b6ef5;--teal:#0ea97e;--red:#e03c3c;--amber:#d98b10;--green:#2ba84a;--purple:#7c5ce8;--coral:#e8650a;--font:-apple-system,'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',sans-serif}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:14px}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+html{font-size:14px}body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
 .app{display:flex;min-height:100vh}
 .sidebar{width:210px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
 .sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .logo-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#4f80ff,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
-.logo-text{font-size:13px;font-weight:600}
-.logo-sub{font-size:10px;color:var(--text3);margin-top:1px}
+.logo-text{font-size:13px;font-weight:600}.logo-sub{font-size:10px;color:var(--text3);margin-top:1px}
 .sidebar-nav{padding:12px 10px;flex:1}
 .nav-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;padding:0 8px;margin:12px 0 5px}
 .nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;font-size:12px;color:var(--text2);cursor:pointer;margin-bottom:1px}
@@ -31,35 +22,43 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .pulse{width:5px;height:5px;border-radius:50%;background:var(--teal);display:inline-block;margin-right:5px;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 .main{flex:1;padding:26px 30px;overflow-x:hidden;min-width:0}
-.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
-.page-title{font-size:21px;font-weight:700}
-.page-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.page-title{font-size:21px;font-weight:700;letter-spacing:-.02em}.page-sub{font-size:12px;color:var(--text3);margin-top:2px}
 .badge-week{background:rgba(59,110,245,.1);border:1px solid rgba(59,110,245,.25);color:var(--accent);font-size:11px;font-weight:600;padding:4px 11px;border-radius:100px}
-.info-bar{background:var(--bg2);border:1px solid rgba(59,110,245,.2);border-left:3px solid var(--accent);border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:11px;color:var(--text2);line-height:1.7}
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.mar-banner{background:var(--bg2);border:1px solid rgba(245,166,35,.3);border-left:3px solid var(--amber);border-radius:10px;padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.mar-banner-text{font-size:12px;color:var(--text2);flex:1;line-height:1.5}.mar-banner-text strong{color:var(--amber)}
+.mar-prog-track{width:110px;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;flex-shrink:0}
+.mar-prog-fill{height:100%;background:var(--amber);border-radius:3px;width:10%}
+.mar-prog-label{font-size:11px;font-weight:600;color:var(--amber);white-space:nowrap;margin-left:6px}
+.toggle-wrap{display:flex;align-items:center;gap:8px;margin-bottom:18px}
+.toggle-lbl{font-size:12px;color:var(--text3)}.toggle-lbl.on{color:var(--text2);font-weight:500}
+.toggle-btn{width:34px;height:18px;border-radius:9px;background:var(--bg4);border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;padding:0}
+.toggle-btn.active{background:var(--amber)}
+.toggle-thumb{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s}
+.toggle-btn.active .toggle-thumb{transform:translateX(16px)}
+.proj-note{font-size:11px;color:var(--amber);background:rgba(200,130,10,.08);border:1px solid rgba(200,130,10,.2);border-radius:6px;padding:2px 9px;display:none}
+.proj-note.on{display:inline-block}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:18px 20px;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
 .kpi-card.c1::before{background:linear-gradient(90deg,#3b6ef5,#7c5ce8)}
 .kpi-card.c2::before{background:linear-gradient(90deg,#0ea97e,#0bcfb0)}
 .kpi-card.c3::before{background:linear-gradient(90deg,#d93232,#e86060)}
 .kpi-card.c4::before{background:linear-gradient(90deg,#d98b10,#f0b030)}
-.kpi-card.gp::before{background:linear-gradient(90deg,#2ba84a,#0ea97e)}
 .kpi-lbl{font-size:10px;font-weight:500;color:var(--text3);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
 .kpi-val{font-size:26px;font-weight:700;letter-spacing:-.02em}
-.kpi-val.sm{font-size:22px}
 .kpi-unit{font-size:13px;font-weight:400;color:var(--text2);margin-left:2px}
 .kpi-foot{display:flex;align-items:center;gap:5px;margin-top:8px;flex-wrap:wrap}
 .chip{font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px}
-.chip.r{background:rgba(220,50,50,.1);color:#c0202f}
-.chip.g{background:rgba(30,160,80,.1);color:#1a8040}
-.chip.a{background:rgba(200,130,10,.1);color:#a06000}
+.chip.r{background:rgba(220,50,50,.1);color:#c0202f}.chip.g{background:rgba(30,160,80,.1);color:#1a8040}.chip.a{background:rgba(200,130,10,.1);color:#a06000}
 .chip-lbl{font-size:10px;color:var(--text3)}
+.proj-badge{font-size:10px;color:var(--amber);background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);border-radius:4px;padding:1px 5px;display:none}
+.proj-badge.on{display:inline-block}
 .sec{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .sec::after{content:'';flex:1;height:1px;background:var(--border)}
 .row2{display:grid;grid-template-columns:3fr 2fr;gap:14px;margin-bottom:18px}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.card-title{font-size:13px;font-weight:600;margin-bottom:3px}
-.card-sub{font-size:11px;color:var(--text3);margin-bottom:14px}
+.card-title{font-size:13px;font-weight:600;margin-bottom:3px}.card-sub{font-size:11px;color:var(--text3);margin-bottom:14px}
 .leg{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px}
 .leg-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2)}
 .ldot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
@@ -78,12 +77,14 @@ tbody td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--border)
 tbody td:first-child{text-align:left;font-weight:500}
 tbody tr:last-child td{border-bottom:none}
 tbody tr:hover td{background:rgba(0,0,0,.02)}
-.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:12px;color:var(--text3)}
-.spinner{width:36px;height:36px;border:3px solid var(--bg4);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.error-box{background:#fff5f5;border:1px solid #fca5a5;border-radius:10px;padding:20px;margin:20px;color:#c0202f;font-size:13px;line-height:1.8}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+.ins-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px}
+.ins-card{background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:16px 18px;display:flex;gap:12px}
+.i-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.i-icon.r{background:rgba(200,40,40,.1)}.i-icon.a{background:rgba(200,130,10,.1)}.i-icon.b{background:rgba(59,110,245,.1)}.i-icon.t{background:rgba(14,169,126,.1)}
+.i-title{font-size:12px;font-weight:600;margin-bottom:4px}
+.i-body{font-size:11px;color:var(--text2);line-height:1.6}
+.hi{color:#c0202f}.ok{color:#0a7a50}.wa{color:#9a6000}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
 </style>
 </head>
 <body>
@@ -95,134 +96,285 @@ tbody tr:hover td{background:rgba(0,0,0,.02)}
   </div>
   <nav class="sidebar-nav">
     <div class="nav-label">Overview</div>
-    <div class="nav-item active" data-sec="sec-kpi"><div class="nav-dot" style="background:#4f80ff"></div>전사 요약</div>
+    <div class="nav-item active" data-sec="sec-summary"><div class="nav-dot" style="background:#4f80ff"></div>전사 요약</div>
     <div class="nav-item" data-sec="sec-gp"><div class="nav-dot" style="background:#2ba84a"></div>GP 수익성</div>
-    <div class="nav-item" data-sec="sec-trend"><div class="nav-dot" style="background:#2dd4b0"></div>월별 추이</div>
-    <div class="nav-item" data-sec="sec-channel"><div class="nav-dot" style="background:#a78bfa"></div>채널 현황</div>
+    <div class="nav-item" data-sec="sec-channel"><div class="nav-dot" style="background:#2dd4b0"></div>국내/해외</div>
     <div class="nav-label">브랜드</div>
-    <div class="nav-item" data-sec="sec-brand"><div class="nav-dot" style="background:#60a5fa"></div>브랜드별 실적</div>
-    <div class="nav-item" data-sec="sec-sku"><div class="nav-dot" style="background:#fb923c"></div>채널별 SKU TOP</div>
+    <div class="nav-item" data-sec="sec-brand"><div class="nav-dot" style="background:#60a5fa"></div>브랜드 현황</div>
+    <div class="nav-item" data-sec="sec-sku"><div class="nav-dot" style="background:#fb923c"></div>채널 SKU TOP</div>
+    <div class="nav-label">분석</div>
+    <div class="nav-item" data-sec="sec-gp-analysis"><div class="nav-dot" style="background:#2ba84a"></div>GP 추이</div>
+    <div class="nav-item" data-sec="sec-insight"><div class="nav-dot" style="background:#c0c7d8"></div>시사점</div>
   </nav>
-  <div class="sidebar-footer" id="footerDate"><span class="pulse"></span>데이터 로딩중...</div>
+  <div class="sidebar-footer" id="sidebarFooter"><span class="pulse"></span>로딩중...</div>
 </aside>
 
-<main class="main" id="mainContent">
-  <div class="loading" id="loadingBox">
-    <div class="spinner"></div>
-    <div>데이터를 불러오는 중...</div>
+<main class="main">
+  <div class="page-header">
+    <div>
+      <div class="page-title">주간 실적 대시보드</div>
+      <div class="page-sub" id="pageSubText">기준: — · 단위: 백만원</div>
+    </div>
+    <div><span class="badge-week" id="badgeWeek">—</span></div>
+  </div>
+
+  <div style="background:#f0f4ff;border:1px solid #c5d0f0;border-radius:8px;padding:8px 16px;margin-bottom:14px;font-size:11px;color:#3a4a7a;line-height:1.7">
+    <strong>📌 집계 기준</strong> &nbsp;|&nbsp; 매출: <strong>원화판매금액 (부가세 제외)</strong> &nbsp;|&nbsp; GP: <strong>매출 − 매출원가</strong> &nbsp;|&nbsp; 자동 업데이트: <strong id="generatedAt">—</strong>
+  </div>
+
+  <div class="mar-banner">
+    <div style="font-size:15px">📅</div>
+    <div class="mar-banner-text" id="marBannerText"><strong>데이터 로딩중...</strong></div>
+    <div style="display:flex;align-items:center">
+      <div class="mar-prog-track"><div class="mar-prog-fill" id="marProgFill"></div></div>
+      <span class="mar-prog-label" id="marProgLabel">—</span>
+    </div>
+  </div>
+
+  <div class="toggle-wrap">
+    <span class="toggle-lbl on" id="lblA">현재 실적</span>
+    <button class="toggle-btn" id="togBtn" onclick="toggleProj()"><div class="toggle-thumb"></div></button>
+    <span class="toggle-lbl" id="lblP">월말 예상치 반영</span>
+    <span class="proj-note" id="projNote">✦ 예상</span>
+  </div>
+
+  <!-- KPI 매출 -->
+  <div id="sec-summary" style="scroll-margin-top:72px"></div>
+  <div class="kpi-grid">
+    <div class="kpi-card c1">
+      <div class="kpi-lbl">전사 누적 매출</div>
+      <div class="kpi-val"><span id="kv1">—</span><span class="kpi-unit">억</span></div>
+      <div class="kpi-foot"><span class="chip" id="kc1">—</span><span class="chip-lbl">YoY 누적</span><span class="proj-badge" id="pb1">✦ 예상</span></div>
+    </div>
+    <div class="kpi-card c2">
+      <div class="kpi-lbl">계획 달성률 (누적)</div>
+      <div class="kpi-val"><span id="kv2">—</span><span class="kpi-unit">%</span></div>
+      <div class="kpi-foot"><span class="chip a" id="kc2">—</span><span class="chip-lbl" id="kl_plan">—</span><span class="proj-badge" id="pb2">✦ 예상</span></div>
+    </div>
+    <div class="kpi-card c3">
+      <div class="kpi-lbl" id="kpi3lbl">최신월 매출</div>
+      <div class="kpi-val"><span id="kv3">—</span><span class="kpi-unit">억</span></div>
+      <div class="kpi-foot"><span class="chip" id="kc3">—</span><span class="chip-lbl" id="kl3">YoY</span><span class="proj-badge" id="pb3">✦ 예상</span></div>
+    </div>
+    <div class="kpi-card c4">
+      <div class="kpi-lbl" id="kpi4lbl">최신월 달성률</div>
+      <div class="kpi-val"><span id="kv4">—</span><span class="kpi-unit">%</span></div>
+      <div class="kpi-foot"><span class="chip a" id="kc4">—</span><span class="chip-lbl" id="kl4">—</span><span class="proj-badge" id="pb4">✦ 예상</span></div>
+    </div>
+  </div>
+
+  <!-- KPI GP -->
+  <div id="sec-gp" style="scroll-margin-top:72px"></div>
+  <div class="kpi-grid" style="margin-top:4px">
+    <div class="kpi-card" style="border-top:2px solid #2ba84a">
+      <div class="kpi-lbl" style="color:#2ba84a;font-weight:600">누적 GP</div>
+      <div class="kpi-val" style="font-size:24px"><span id="kv_gp_acc">—</span><span class="kpi-unit">억</span></div>
+      <div class="kpi-foot"><span id="chip_gp_acc" class="chip">—</span><span class="chip-lbl" id="gp_acc_lbl">YoY</span></div>
+    </div>
+    <div class="kpi-card" style="border-top:2px solid #2ba84a">
+      <div class="kpi-lbl" style="color:#2ba84a;font-weight:600">누적 GPM</div>
+      <div class="kpi-val" style="font-size:24px"><span id="kv_gpm_acc">—</span><span class="kpi-unit">%</span></div>
+      <div class="kpi-foot"><span id="chip_gpm_acc" class="chip">—</span><span class="chip-lbl" id="gpm_acc_lbl">YoY</span></div>
+    </div>
+    <div class="kpi-card" style="border-top:2px solid #2ba84a">
+      <div class="kpi-lbl" style="color:#2ba84a;font-weight:600" id="gp3lbl">최신월 GP</div>
+      <div class="kpi-val" style="font-size:24px"><span id="kv_gp3">—</span><span class="kpi-unit">억</span></div>
+      <div class="kpi-foot"><span id="chip_gp3" class="chip">—</span><span class="chip-lbl" id="kl_gp3">YoY</span><span class="proj-badge" id="pb_gp3">✦ 예상</span></div>
+    </div>
+    <div class="kpi-card" style="border-top:2px solid #2ba84a">
+      <div class="kpi-lbl" style="color:#2ba84a;font-weight:600" id="gpm3lbl">최신월 GPM</div>
+      <div class="kpi-val" style="font-size:24px"><span id="kv_gpm3">—</span><span class="kpi-unit">%</span></div>
+      <div class="kpi-foot"><span id="chip_gpm3" class="chip">—</span><span class="chip-lbl" id="gpm3_lbl">YoY</span></div>
+    </div>
+  </div>
+
+  <!-- 추이 차트 -->
+  <div class="sec" style="margin-top:20px">전사 매출 추이</div>
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">월별 매출 추이 — 전사</div>
+      <div class="card-sub" id="trendSub">25년 실적 vs 26년 실적 vs 사업계획</div>
+      <div class="leg">
+        <span class="leg-item"><span class="ldot" style="background:rgba(59,110,245,.25)"></span>25년</span>
+        <span class="leg-item"><span class="ldot" style="background:#4f80ff"></span>26년</span>
+        <span class="leg-item" id="legProj" style="display:none"><span class="ldot" style="background:rgba(245,166,35,.7)"></span>예상</span>
+        <span class="leg-item"><span class="ldot" style="background:#2dd4b0"></span>계획</span>
+      </div>
+      <canvas id="cTrend" height="220"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">YoY 변동률</div>
+      <div class="card-sub" id="yoySub">주요 지표 전년 대비</div>
+      <div class="yoy-list" id="yoyList"></div>
+    </div>
+  </div>
+
+  <!-- 국내/해외 -->
+  <div id="sec-channel" style="scroll-margin-top:72px"></div>
+  <div class="card" style="margin-bottom:18px">
+    <div class="card-title">국내 vs 해외 월별 비교</div>
+    <div class="card-sub">채널별 실적 추이</div>
+    <div class="leg">
+      <span class="leg-item"><span class="ldot" style="background:rgba(14,169,126,.25)"></span>국내 25년</span>
+      <span class="leg-item"><span class="ldot" style="background:#2dd4b0"></span>국내 26년</span>
+      <span class="leg-item"><span class="ldot" style="background:rgba(124,92,232,.25)"></span>해외 25년</span>
+      <span class="leg-item"><span class="ldot" style="background:#a78bfa"></span>해외 26년</span>
+    </div>
+    <canvas id="cChannel" height="210"></canvas>
+  </div>
+
+  <!-- 브랜드 KPI -->
+  <div id="sec-brand" style="scroll-margin-top:72px"></div>
+  <div class="sec">브랜드 & 채널 현황</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px" id="segKpis"></div>
+
+  <!-- 채널 테이블 -->
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">채널별 누적 매출 (26년 vs 25년)</div>
+      <div class="card-sub">상위 채널 기준</div>
+      <canvas id="cChannel2" height="240"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">채널별 상세 (백만원)</div>
+      <div class="card-sub">26년 누적 · YoY 비교</div>
+      <table>
+        <thead><tr><th style="text-align:left">채널</th><th>26년</th><th>25년</th><th>YoY</th></tr></thead>
+        <tbody id="channelTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SKU TOP -->
+  <div id="sec-sku" style="scroll-margin-top:72px"></div>
+  <div class="sec">채널별 주력 SKU TOP5</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px" id="skuGrid"></div>
+
+  <!-- GP 추이 -->
+  <div id="sec-gp-analysis" style="scroll-margin-top:72px"></div>
+  <div class="sec">GP 심층 분석</div>
+  <div class="card" style="margin-bottom:18px">
+    <div class="card-title">브랜드별 GPM 월별 추이</div>
+    <div class="card-sub">26년 vs 25년 GPM (%) — 실선: 26년 / 점선: 25년</div>
+    <canvas id="cGPMTrend" height="220"></canvas>
+  </div>
+
+  <!-- 시사점 -->
+  <div id="sec-insight" style="scroll-margin-top:72px"></div>
+  <div class="sec">주요 시사점</div>
+  <div class="ins-grid">
+    <div class="ins-card"><div class="i-icon r">📊</div><div><div class="i-title">전사 매출 현황</div><div class="i-body" id="ins1">로딩중...</div></div></div>
+    <div class="ins-card"><div class="i-icon a">📅</div><div><div class="i-title">최신월 진행 현황</div><div class="i-body" id="ins2">로딩중...</div></div></div>
+    <div class="ins-card"><div class="i-icon t">💰</div><div><div class="i-title">GP 현황</div><div class="i-body" id="ins3">로딩중...</div></div></div>
+    <div class="ins-card"><div class="i-icon b">🏆</div><div><div class="i-title">Hero 브랜드</div><div class="i-body" id="ins4">로딩중...</div></div></div>
+    <div class="ins-card"><div class="i-icon a">⚡</div><div><div class="i-title">Champion 브랜드</div><div class="i-body" id="ins5">로딩중...</div></div></div>
+    <div class="ins-card"><div class="i-icon r">🌏</div><div><div class="i-title">기타 브랜드</div><div class="i-body" id="ins6">로딩중...</div></div></div>
   </div>
 </main>
 </div>
 
 <script>
-const DATA_URL = './dashboard_data.json';
-let D = null; // 전역 데이터
+/* ══════════════════════════════════════════
+   주간 실적 대시보드 — JSON 자동 연동 버전
+   엑셀 업데이트 → GitHub push → 자동 반영
+   ══════════════════════════════════════════ */
+
+let D = null;
+let isProj = false;
 
 /* ── 유틸 ── */
 const $ = id => document.getElementById(id);
-const fmt = (v, d=1) => v == null ? '—' : Number(v).toFixed(d);
-const fmtB = v => v == null ? '—' : (v/100).toFixed(1) + '억';
-const sum = obj => Object.values(obj||{}).reduce((a,b)=>a+(b||0),0);
-const sumMonths = (obj, months) => months.reduce((a,m)=>a+(obj[m]||0),0);
+const fmt = (v, d=1) => v==null ? '—' : Number(v).toFixed(d);
+const fmtB = v => v==null ? '—' : (v/100).toFixed(1);
+const sumM = (obj, ms) => ms.reduce((a,m) => a+(obj[m]||0), 0);
 
-function chipHtml(val, unit='%', isPoint=false) {
-  if (val == null) return '';
-  const up = val >= 0;
-  const cls = up ? 'g' : 'r';
-  const arrow = up ? '▲ +' : '▼ ';
-  const suffix = isPoint ? '%p' : unit;
-  return `<span class="chip ${cls}">${arrow}${Math.abs(val).toFixed(1)}${suffix}</span>`;
+function setChip(id, val, unit='%', isPoint=false) {
+  const el = $(id); if (!el) return;
+  if (val==null) { el.textContent='—'; el.className='chip'; return; }
+  const up = val>=0;
+  el.className = 'chip ' + (up?'g':'r');
+  el.textContent = (up?'▲ +':'▼ ') + Math.abs(val).toFixed(1) + (isPoint?'%p':unit);
 }
 
 /* ── Canvas 유틸 ── */
 function setupCanvas(id, h) {
-  const canvas = document.getElementById(id);
-  if (!canvas) return null;
-  const dpr = window.devicePixelRatio || 1;
-  const w = canvas.offsetWidth || canvas.parentElement.clientWidth || 400;
-  canvas.width = w * dpr;
-  canvas.height = (h || canvas.height) * dpr;
-  canvas.style.width = w + 'px';
-  canvas.style.height = (h || canvas.height/dpr) + 'px';
-  const ctx = canvas.getContext('2d');
-  ctx.scale(dpr, dpr);
-  return { ctx, w, h: h || canvas.height/dpr };
+  const canvas=$(id); if(!canvas) return null;
+  const dpr=window.devicePixelRatio||1;
+  const w=canvas.offsetWidth||canvas.parentElement?.clientWidth||400;
+  canvas.width=w*dpr; canvas.height=(h||220)*dpr;
+  canvas.style.width=w+'px'; canvas.style.height=(h||220)+'px';
+  const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  return {ctx,w,h:h||220};
 }
 
-function roundRect(ctx, x, y, w, h, r) {
-  if (w <= 0 || h <= 0) return;
+function roundRect(ctx,x,y,w,h,r){
+  if(w<=0||h<=0)return;
   ctx.beginPath();
-  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
-  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-  ctx.lineTo(x+w,y+h-r);
-  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-  ctx.lineTo(x+r,y+h);
-  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
-  ctx.lineTo(x,y+r);
-  ctx.quadraticCurveTo(x,y,x+r,y);
-  ctx.closePath(); ctx.fill();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();ctx.fill();
 }
 
 function drawGroupedBar(id, labels, datasets, h=220) {
-  const cv = setupCanvas(id, h);
-  if (!cv) return;
-  const { ctx, w } = cv;
-  const pad = {t:16,r:16,b:36,l:44};
-  const cw = w-pad.l-pad.r, ch = h-pad.t-pad.b;
-  const barDs = datasets.filter(d=>d.type!=='line');
-  const lineDs = datasets.filter(d=>d.type==='line');
-  const allV = barDs.slice(1).flatMap(d=>d.data.filter(v=>v!=null&&!isNaN(v)));
-  const maxV = Math.max(...allV, 1) * 1.18;
-  const font = getComputedStyle(document.body).fontFamily;
+  const cv=setupCanvas(id,h); if(!cv) return;
+  const {ctx,w}=cv;
+  const pad={t:16,r:16,b:36,l:48};
+  const cw=w-pad.l-pad.r, ch=h-pad.t-pad.b;
+  const barDs=datasets.filter(d=>d.type!=='line');
+  const lineDs=datasets.filter(d=>d.type==='line');
+  const allV=barDs.flatMap(d=>d.data.filter(v=>v!=null&&!isNaN(v)&&v>0));
+  const maxV=Math.max(...allV,1)*1.18;
+  const font=getComputedStyle(document.body).fontFamily;
 
-  for (let i=0;i<=4;i++) {
+  for(let i=0;i<=4;i++){
     const v=maxV*i/4, y=pad.t+ch-ch*i/4;
     ctx.globalAlpha=.45; ctx.strokeStyle='rgba(0,0,0,.07)'; ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
     ctx.globalAlpha=1; ctx.fillStyle='#9099b5'; ctx.textAlign='right';
     ctx.font=`10px ${font}`;
-    ctx.fillText((v>=10000?(v/1000).toFixed(0)+'B':v.toFixed(0)), pad.l-4, y+4);
+    ctx.fillText(v>=10000?(v/1000).toFixed(0)+'B':v.toFixed(0), pad.l-4, y+4);
   }
 
-  const gw = cw/labels.length;
-  const bw = gw * 0.78 / barDs.length;
-  const bgap = gw * 0.22 / 2;
-  barDs.forEach((ds, di) => {
-    ds.data.forEach((v, i) => {
-      if (!v || isNaN(v)) return;
-      const x = pad.l + i*gw + bgap + di*bw;
-      const bh = Math.max(2, ch * Math.min(v,maxV) / maxV);
-      ctx.fillStyle = ds.color;
-      roundRect(ctx, x, pad.t+ch-bh, bw-1, bh, 3);
+  const gw=cw/labels.length;
+  const bw=gw*.78/barDs.length;
+  const bgap=gw*.22/2;
+  barDs.forEach((ds,di)=>{
+    ds.data.forEach((v,i)=>{
+      if(!v||isNaN(v)) return;
+      const x=pad.l+i*gw+bgap+di*bw;
+      const bh=Math.max(2,ch*Math.min(v,maxV)/maxV);
+      ctx.fillStyle=ds.color;
+      roundRect(ctx,x,pad.t+ch-bh,bw-1,bh,3);
     });
   });
 
-  lineDs.forEach(ds => {
+  lineDs.forEach(ds=>{
     ctx.strokeStyle=ds.color; ctx.lineWidth=2; ctx.setLineDash([5,4]);
     ctx.beginPath();
+    let first=true;
     ds.data.forEach((v,i)=>{
       if(v==null) return;
       const x=pad.l+i*gw+gw/2, y=pad.t+ch-ch*v/maxV;
-      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      first?(ctx.moveTo(x,y),first=false):ctx.lineTo(x,y);
     });
     ctx.stroke(); ctx.setLineDash([]);
     ds.data.forEach((v,i)=>{
       if(v==null) return;
       ctx.fillStyle=ds.color;
-      ctx.beginPath(); ctx.arc(pad.l+i*gw+gw/2, pad.t+ch-ch*v/maxV, 3,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(pad.l+i*gw+gw/2,pad.t+ch-ch*v/maxV,3,0,Math.PI*2); ctx.fill();
     });
   });
 
-  ctx.fillStyle='#9099b5'; ctx.textAlign='center';
-  ctx.font=`11px ${font}`;
+  ctx.fillStyle='#9099b5'; ctx.textAlign='center'; ctx.font=`11px ${font}`;
   labels.forEach((l,i)=>ctx.fillText(l, pad.l+i*gw+gw/2, h-8));
 }
 
-function drawHBarColored(id, labels, d25, d26, h=210) {
-  const canvas = document.getElementById(id);
-  if (!canvas) return;
-  const dpr = window.devicePixelRatio||1;
-  const w = canvas.offsetWidth||400;
+function drawHBarColored(id, labels, d25, d26, h=240) {
+  const canvas=$(id); if(!canvas) return;
+  const dpr=window.devicePixelRatio||1;
+  const w=canvas.offsetWidth||400;
   canvas.width=w*dpr; canvas.height=h*dpr;
   canvas.style.width=w+'px'; canvas.style.height=h+'px';
   const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
@@ -235,255 +387,243 @@ function drawHBarColored(id, labels, d25, d26, h=210) {
     ctx.globalAlpha=.45; ctx.strokeStyle='rgba(0,0,0,.07)'; ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
     ctx.globalAlpha=1; ctx.fillStyle='#9099b5'; ctx.textAlign='right'; ctx.font=`10px ${font}`;
-    ctx.fillText(v.toLocaleString(), pad.l-4, y+4);
+    ctx.fillText(v>=1000?(v/1000).toFixed(1)+'K':v.toFixed(0), pad.l-4, y+4);
   }
   const gw=cw/labels.length, bw=gw*.35;
   labels.forEach((l,i)=>{
     const gx=pad.l+i*gw;
     ctx.fillStyle='rgba(160,168,190,.4)';
-    roundRect(ctx,gx+gw*.08,pad.t+ch-ch*d25[i]/maxV,bw,ch*d25[i]/maxV,3);
-    ctx.fillStyle=d26[i]>=d25[i]?'rgba(26,128,64,.75)':'rgba(200,40,40,.75)';
-    roundRect(ctx,gx+gw*.08+bw+2,pad.t+ch-ch*d26[i]/maxV,bw,ch*d26[i]/maxV,3);
+    roundRect(ctx,gx+gw*.08,pad.t+ch-ch*(d25[i]||0)/maxV,bw,ch*(d25[i]||0)/maxV,3);
+    ctx.fillStyle=d26[i]>=(d25[i]||0)?'rgba(26,128,64,.75)':'rgba(200,40,40,.75)';
+    roundRect(ctx,gx+gw*.08+bw+2,pad.t+ch-ch*(d26[i]||0)/maxV,bw,ch*(d26[i]||0)/maxV,3);
     ctx.save(); ctx.fillStyle='#9099b5'; ctx.font=`10px ${font}`;
     ctx.textAlign='right'; ctx.textBaseline='middle';
-    ctx.translate(gx+gw/2, pad.t+ch+10); ctx.rotate(-Math.PI/4);
-    ctx.fillText(l, 0, 0); ctx.restore();
+    ctx.translate(gx+gw/2,pad.t+ch+10); ctx.rotate(-Math.PI/4);
+    ctx.fillText(l,0,0); ctx.restore();
   });
 }
 
-/* ── 데이터 로드 후 렌더 ── */
-async function loadAndRender() {
+function drawGPMTrend() {
+  const cv=setupCanvas('cGPMTrend',220); if(!cv) return;
+  const {ctx,w}=cv; const h=220;
+  const s26=D.monthly.gpm_26, s25=D.monthly.gpm_25;
+  const months=D.meta.months_done;
+  const maxM=Math.max(...months);
+  const labels=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'].slice(0,maxM);
+  const b26=D.brand.sales_26, b25=D.brand.sales_25;
+
+  // 브랜드별 GPM 계산 (월별 GP/매출)
+  const brandColors={'hero':'#3b6ef5','champion':'#e8650a','other':'#7c5ce8'};
+  const pad={t:24,r:16,b:36,l:44};
+  const cw=w-pad.l-pad.r, ch=h-pad.t-pad.b;
+  const allGPM=[...Object.values(s26),...Object.values(s25)].filter(v=>v!=null);
+  const minV=Math.max(0,Math.min(...allGPM)-5);
+  const maxV=Math.min(100,Math.max(...allGPM)+5);
+  const toY=v=>pad.t+ch-ch*(v-minV)/(maxV-minV);
+  const toX=i=>pad.l+i*(cw/(maxM-1||1));
+  const font=getComputedStyle(document.body).fontFamily;
+
+  for(let i=0;i<=4;i++){
+    const v=minV+(maxV-minV)*i/4, y=toY(v);
+    ctx.globalAlpha=.4; ctx.strokeStyle='rgba(0,0,0,.07)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
+    ctx.globalAlpha=1; ctx.fillStyle='#9099b5'; ctx.textAlign='right'; ctx.font=`10px ${font}`;
+    ctx.fillText(v.toFixed(0)+'%',pad.l-4,y+4);
+  }
+
+  // 전사 GPM 25년 점선
+  ctx.strokeStyle='rgba(150,150,150,.4)'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
+  ctx.beginPath();
+  months.forEach((m,i)=>{
+    const v=s25[m]; if(v==null) return;
+    i===0?ctx.moveTo(toX(m-1),toY(v)):ctx.lineTo(toX(m-1),toY(v));
+  });
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // 전사 GPM 26년 실선
+  ctx.strokeStyle='#4f80ff'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  months.forEach((m,i)=>{
+    const v=s26[m]; if(v==null) return;
+    i===0?ctx.moveTo(toX(m-1),toY(v)):ctx.lineTo(toX(m-1),toY(v));
+  });
+  ctx.stroke();
+  months.forEach(m=>{
+    const v=s26[m]; if(v==null) return;
+    ctx.fillStyle='#4f80ff';
+    ctx.beginPath(); ctx.arc(toX(m-1),toY(v),3.5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#4f80ff'; ctx.textAlign='center'; ctx.font=`bold 9px ${font}`;
+    ctx.fillText(v.toFixed(1)+'%',toX(m-1),toY(v)-8);
+  });
+
+  labels.forEach((l,i)=>{
+    ctx.fillStyle='#9099b5'; ctx.textAlign='center'; ctx.font=`11px ${font}`;
+    ctx.fillText(l,pad.l+i*(cw/(maxM-1||1)),h-8);
+  });
+}
+
+/* ── 메인 렌더 ── */
+async function init() {
   try {
-    const res = await fetch(DATA_URL + '?t=' + Date.now());
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    D = await res.json();
-    render();
+    const res=await fetch('./dashboard_data.json?t='+Date.now());
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    D=await res.json();
+    renderAll();
   } catch(e) {
-    $('mainContent').innerHTML = `<div class="error-box">
-      <strong>⚠️ 데이터를 불러올 수 없습니다</strong><br><br>
-      오류: ${e.message}<br><br>
-      <strong>해결 방법:</strong><br>
-      1. <code>data/</code> 폴더에 <code>실적데이터.xlsx</code> 파일이 있는지 확인<br>
-      2. GitHub에 엑셀 파일을 push하면 자동으로 <code>dashboard_data.json</code>이 생성됩니다<br>
-      3. 로컬 테스트 시: <code>python convert.py</code> 실행 후 새로고침
-    </div>`;
+    console.error('데이터 로드 실패:',e);
+    document.querySelector('.main').innerHTML='<div style="padding:40px;color:#c0202f;background:#fff5f5;border-radius:12px;margin:20px;line-height:2"><strong>⚠️ 데이터를 불러올 수 없습니다</strong><br>오류: '+e.message+'<br><br>1. data/ 폴더에 실적데이터.xlsx 파일 확인<br>2. GitHub Actions 실행 완료 여부 확인<br>3. 로컬: python convert.py 실행 후 새로고침</div>';
   }
 }
 
-function render() {
-  const m = D.meta;
-  const s26 = D.monthly.sales_26;
-  const s25 = D.monthly.sales_25;
-  const gp26 = D.monthly.gp_26;
-  const gp25 = D.monthly.gp_25;
-  const gpm26 = D.monthly.gpm_26;
-  const gpm25 = D.monthly.gpm_25;
-  const plan = D.monthly.plan;
-  const months = m.months_done;
-  const lastM = m.last_month;
-
-  // 누적 계산
-  const acc26 = sumMonths(s26, months);
-  const acc25 = sumMonths(s25, months);
-  const acc_gp26 = sumMonths(gp26, months);
-  const acc_gp25 = sumMonths(gp25, months);
-  const acc_plan = sumMonths(plan, months);
-  const yoy_acc = acc25 > 0 ? (acc26-acc25)/acc25*100 : null;
-  const yoy_m = s25[lastM] > 0 ? (s26[lastM]-s25[lastM])/s25[lastM]*100 : null;
-  const achv_acc = acc_plan > 0 ? acc26/acc_plan*100 : null;
-  const achv_m = plan[lastM] > 0 ? s26[lastM]/plan[lastM]*100 : null;
-  const gpm26_acc = acc26 > 0 ? acc_gp26/acc26*100 : null;
-  const gpm25_acc = acc25 > 0 ? acc_gp25/acc25*100 : null;
-
-  // 주차 계산
-  const d = new Date(m.last_date);
-  const weekNum = Math.ceil((d.getDate()) / 7);
-  const weekLabel = `${d.getMonth()+1}월 ${weekNum}주차`;
-
-  $('footerDate').innerHTML = `<span class="pulse"></span>${m.last_date} 기준`;
-
-  $('mainContent').innerHTML = `
-  <div class="page-header">
-    <div>
-      <div class="page-title">주간 실적 대시보드</div>
-      <div class="page-sub">기준: ${m.last_date} · 1~${lastM}월 누적 · 단위: 백만원 · 자동 생성: ${m.generated_at}</div>
-    </div>
-    <span class="badge-week">${weekLabel}</span>
-  </div>
-
-  <div class="info-bar">
-    <strong>📌 집계 기준</strong>
-    &nbsp;|&nbsp; 매출: <strong>원화판매금액 (부가세 제외)</strong>
-    &nbsp;|&nbsp; GP: <strong>이익액 (예상이익기준 총원가 기준)</strong>
-    &nbsp;|&nbsp; 브랜드: <strong>라인명 기준 자동 분류</strong>
-    &nbsp;|&nbsp; 집계월: <strong>${months.join(', ')}월</strong>
-  </div>
-
-  <!-- 매출 KPI -->
-  <div id="sec-kpi" style="scroll-margin-top:72px"></div>
-  <div class="sec">전사 핵심 지표</div>
-  <div class="kpi-grid">
-    <div class="kpi-card c1">
-      <div class="kpi-lbl">전사 누적 매출</div>
-      <div class="kpi-val">${fmtB(acc26)}</div>
-      <div class="kpi-foot">${chipHtml(yoy_acc)}<span class="chip-lbl">YoY 누적</span></div>
-    </div>
-    <div class="kpi-card c2">
-      <div class="kpi-lbl">계획 달성률 (누적)</div>
-      <div class="kpi-val">${fmt(achv_acc)}<span class="kpi-unit">%</span></div>
-      <div class="kpi-foot"><span class="chip ${achv_acc>=100?'g':achv_acc>=80?'a':'r'}">${fmt(achv_acc-100,1)}%p</span><span class="chip-lbl">계획 ${fmtB(acc_plan)}</span></div>
-    </div>
-    <div class="kpi-card c3">
-      <div class="kpi-lbl">${lastM}월 매출</div>
-      <div class="kpi-val">${fmtB(s26[lastM])}</div>
-      <div class="kpi-foot">${chipHtml(yoy_m)}<span class="chip-lbl">YoY ${lastM}월</span></div>
-    </div>
-    <div class="kpi-card c4">
-      <div class="kpi-lbl">${lastM}월 계획 달성률</div>
-      <div class="kpi-val">${fmt(achv_m)}<span class="kpi-unit">%</span></div>
-      <div class="kpi-foot"><span class="chip ${achv_m>=90?'g':achv_m>=70?'a':'r'}">${fmt(achv_m-100,1)}%p</span><span class="chip-lbl">계획 ${plan[lastM]?.toFixed(0)}백만</span></div>
-    </div>
-  </div>
-
-  <!-- GP KPI -->
-  <div id="sec-gp" style="scroll-margin-top:72px"></div>
-  <div class="kpi-grid">
-    <div class="kpi-card gp">
-      <div class="kpi-lbl" style="color:#2ba84a;font-weight:600">누적 GP</div>
-      <div class="kpi-val sm">${fmtB(acc_gp26)}</div>
-      <div class="kpi-foot">${chipHtml(acc_gp25>0?(acc_gp26-acc_gp25)/acc_gp25*100:null)}<span class="chip-lbl">YoY</span></div>
-    </div>
-    <div class="kpi-card gp">
-      <div class="kpi-lbl" style="color:#2ba84a;font-weight:600">누적 GPM</div>
-      <div class="kpi-val sm">${fmt(gpm26_acc)}<span class="kpi-unit">%</span></div>
-      <div class="kpi-foot">${chipHtml(gpm26_acc!=null&&gpm25_acc!=null?gpm26_acc-gpm25_acc:null,'%p',true)}<span class="chip-lbl">YoY (25년 ${fmt(gpm25_acc)}%)</span></div>
-    </div>
-    <div class="kpi-card gp">
-      <div class="kpi-lbl" style="color:#2ba84a;font-weight:600">${lastM}월 GP</div>
-      <div class="kpi-val sm">${fmtB(gp26[lastM])}</div>
-      <div class="kpi-foot">${chipHtml(gp25[lastM]>0?(gp26[lastM]-gp25[lastM])/gp25[lastM]*100:null)}<span class="chip-lbl">YoY</span></div>
-    </div>
-    <div class="kpi-card gp">
-      <div class="kpi-lbl" style="color:#2ba84a;font-weight:600">${lastM}월 GPM</div>
-      <div class="kpi-val sm">${fmt(gpm26[lastM])}<span class="kpi-unit">%</span></div>
-      <div class="kpi-foot">${chipHtml(gpm26[lastM]!=null&&gpm25[lastM]!=null?gpm26[lastM]-gpm25[lastM]:null,'%p',true)}<span class="chip-lbl">YoY (25년 ${fmt(gpm25[lastM])}%)</span></div>
-    </div>
-  </div>
-
-  <!-- 추이 차트 -->
-  <div id="sec-trend" style="scroll-margin-top:72px"></div>
-  <div class="sec">월별 추이</div>
-  <div class="row2">
-    <div class="card">
-      <div class="card-title">월별 매출 추이 — 전사</div>
-      <div class="card-sub">25년 실적 vs 26년 실적 vs 사업계획</div>
-      <div class="leg">
-        <span class="leg-item"><span class="ldot" style="background:rgba(59,110,245,.25)"></span>25년</span>
-        <span class="leg-item"><span class="ldot" style="background:#4f80ff"></span>26년</span>
-        <span class="leg-item"><span class="ldot" style="background:#2dd4b0"></span>계획</span>
-      </div>
-      <canvas id="cTrend" height="220"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">YoY 변동률</div>
-      <div class="card-sub">주요 지표 전년 대비 (%)</div>
-      <div class="yoy-list" id="yoyList"></div>
-    </div>
-  </div>
-
-  <!-- 국내/해외 -->
-  <div class="card" style="margin-bottom:18px">
-    <div class="card-title">국내 vs 해외 월별 비교</div>
-    <div class="card-sub">채널별 1~${lastM}월 실적 추이</div>
-    <div class="leg">
-      <span class="leg-item"><span class="ldot" style="background:rgba(14,169,126,.25)"></span>국내 25년</span>
-      <span class="leg-item"><span class="ldot" style="background:#2dd4b0"></span>국내 26년</span>
-      <span class="leg-item"><span class="ldot" style="background:rgba(124,92,232,.25)"></span>해외 25년</span>
-      <span class="leg-item"><span class="ldot" style="background:#a78bfa"></span>해외 26년</span>
-    </div>
-    <canvas id="cChannel" height="210"></canvas>
-  </div>
-
-  <!-- 채널 현황 -->
-  <div id="sec-channel" style="scroll-margin-top:72px"></div>
-  <div class="sec">채널별 실적 현황</div>
-  <div class="row2">
-    <div class="card">
-      <div class="card-title">채널별 누적 매출 (26년 vs 25년)</div>
-      <div class="card-sub">1~${lastM}월 누적 · 상위 채널 기준</div>
-      <canvas id="cChannel2" height="240"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">채널별 상세 (백만원)</div>
-      <div class="card-sub">26년 누적 기준 · YoY 비교</div>
-      <table>
-        <thead><tr><th style="text-align:left">채널</th><th>26년</th><th>25년</th><th>YoY</th></tr></thead>
-        <tbody id="channelTableBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- 브랜드 -->
-  <div id="sec-brand" style="scroll-margin-top:72px"></div>
-  <div class="sec">브랜드별 실적</div>
-  <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
-    ${buildBrandKpis()}
-  </div>
-  <div class="card" style="margin-bottom:18px">
-    <div class="card-title">브랜드별 월별 매출 추이</div>
-    <div class="card-sub">Hero · Champion(非다이소) · 다이소 · 기타 — 26년 vs 25년</div>
-    <div class="leg">
-      <span class="leg-item"><span class="ldot" style="background:#3b6ef5"></span>Hero 26년</span>
-      <span class="leg-item"><span class="ldot" style="background:#e8650a"></span>Champion 26년</span>
-      <span class="leg-item"><span class="ldot" style="background:#0ea97e"></span>다이소 26년</span>
-      <span class="leg-item"><span class="ldot" style="background:#7c5ce8"></span>기타 26년</span>
-    </div>
-    <canvas id="cBrand" height="220"></canvas>
-  </div>
-
-  <!-- SKU TOP -->
-  <div id="sec-sku" style="scroll-margin-top:72px"></div>
-  <div class="sec">채널별 주력 SKU TOP5</div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px" id="skuGrid"></div>
-  `;
-
-  buildCharts();
+function renderAll() {
+  updateHeader();
+  updateKPIs();
+  updateGPKPIs();
   buildYoY();
+  buildSegKpis();
+  buildCharts();
   buildChannelTable();
   buildSkuGrid();
+  buildInsights();
+  drawGPMTrend();
+  initNav();
+}
 
-  // 사이드바 네비
-  document.querySelectorAll('.nav-item[data-sec]').forEach(item => {
-    item.addEventListener('click', () => {
-      const el = document.getElementById(item.dataset.sec);
-      if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
-      document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
-      item.classList.add('active');
-    });
+function updateHeader() {
+  const m=D.meta;
+  const d=new Date(m.last_date);
+  const weekNum=Math.ceil(d.getDate()/7);
+  const weekLabel=`W${getWeekNumber(d)} · ${d.getMonth()+1}월 ${weekNum}주차`;
+  const pct=Math.round(m.days_elapsed/m.days_in_month*100);
+
+  $('sidebarFooter').innerHTML=`<span class="pulse"></span>${m.last_date} 기준 (${m.last_month}월 진행중)`;
+  $('pageSubText').textContent=`기준: ${m.last_date} · 1~${m.last_month}월 누적 · 단위: 백만원`;
+  $('badgeWeek').textContent=weekLabel;
+  $('generatedAt').textContent=m.generated_at||'—';
+  $('marBannerText').innerHTML=`<strong>${m.last_month}월은 현재 진행 중 (${m.days_elapsed}일 / ${m.days_in_month}일 경과 · ${pct}%)</strong><br>${m.last_month}월 수치는 현재 집계 기준이며, 토글로 월말 예상치를 확인할 수 있습니다.`;
+  $('marProgFill').style.width=pct+'%';
+  $('marProgLabel').textContent=`${m.days_elapsed}/${m.days_in_month}일`;
+  $('kpi3lbl').textContent=`${m.last_month}월 매출`;
+  $('kpi4lbl').textContent=`${m.last_month}월 달성률`;
+  $('gp3lbl').textContent=`${m.last_month}월 GP`;
+  $('gpm3lbl').textContent=`${m.last_month}월 GPM`;
+}
+
+function getWeekNumber(d) {
+  const start=new Date(d.getFullYear(),0,1);
+  return Math.ceil(((d-start)/86400000+start.getDay()+1)/7);
+}
+
+function updateKPIs() {
+  const k=D.kpi, m=D.meta;
+  const s26=D.monthly.sales_26, s25=D.monthly.sales_25, plan=D.monthly.plan;
+  const months=m.months_done, lastM=m.last_month;
+
+  const acc26=sumM(s26,months), acc25=sumM(s25,months);
+  const accPlan=sumM(plan,months);
+  const cur=isProj?k.proj_month_sales:k.cur_month_sales;
+  const cur25=s25[lastM]||0;
+  const curPlan=plan[lastM]||1;
+  const totalAcc=isProj?(acc26-k.cur_month_sales+k.proj_month_sales):acc26;
+
+  $('kv1').textContent=fmtB(totalAcc*100);
+  setChip('kc1',(totalAcc-acc25)/acc25*100);
+
+  const achvAcc=totalAcc/accPlan*100;
+  $('kv2').textContent=fmt(achvAcc);
+  const diff=achvAcc-100;
+  const c2=$('kc2'); c2.className='chip '+(diff>=0?'g':diff>=-20?'a':'r');
+  c2.textContent=(diff>=0?'✓ +':'△ ')+Math.abs(diff).toFixed(1)+'%p';
+  $('kl_plan').textContent=`계획 ${fmtB(accPlan*100)}억`;
+
+  $('kv3').textContent=fmtB(cur*100);
+  setChip('kc3',(cur-cur25)/cur25*100);
+  $('kl3').textContent=`YoY ${isProj?'(예상)':'(현재)'}`;
+
+  const achvM=cur/curPlan*100;
+  $('kv4').textContent=fmt(achvM);
+  const c4=$('kc4'); c4.className='chip '+(achvM>=90?'g':achvM>=70?'a':'r');
+  c4.textContent=(achvM>=100?'✓ ':'')+fmt(achvM-100)+'%p';
+  $('kl4').textContent=isProj?'월말 예상':'현재';
+
+  ['pb1','pb2','pb3','pb4'].forEach(id=>{
+    const el=$(id); if(el) el.className='proj-badge'+(isProj?' on':'');
   });
 }
 
-function buildBrandKpis() {
-  const b26 = D.brand.sales_26;
-  const b25 = D.brand.sales_25;
-  const d26 = D.brand.daiso_26;
-  const d25 = D.brand.daiso_25;
-  const months = D.meta.months_done;
+function updateGPKPIs() {
+  const k=D.kpi, m=D.meta;
+  const lastM=m.last_month;
+  const gp26=isProj?k.proj_gp:k.cur_gp_26;
 
-  const brands = [
-    {key:'hero',     label:'Hero',             color:'#3b6ef5', v26:sumMonths(b26.hero||{},months), v25:sumMonths(b25.hero||{},months)},
-    {key:'champion', label:'Champion(非다이소)', color:'#e8650a', v26:sumMonths(b26.champion||{},months), v25:sumMonths(b25.champion||{},months)},
-    {key:'daiso',    label:'다이소',             color:'#0ea97e', v26:sumMonths(d26||{},months), v25:sumMonths(d25||{},months)},
-    {key:'other',    label:'기타(非다이소)',      color:'#7c5ce8', v26:sumMonths(b26.other||{},months), v25:sumMonths(b25.other||{},months)},
+  $('kv_gp_acc').textContent=fmtB(k.acc_gp_26*100);
+  setChip('chip_gp_acc',(k.acc_gp_26-k.acc_gp_25)/k.acc_gp_25*100);
+  $('gp_acc_lbl').textContent=`YoY (25년 ${fmtB(k.acc_gp_25*100)}억)`;
+
+  $('kv_gpm_acc').textContent=fmt(k.acc_gpm_26);
+  const gpmDiff=k.acc_gpm_26-k.acc_gpm_25;
+  setChip('chip_gpm_acc',gpmDiff,'%p',true);
+  $('gpm_acc_lbl').textContent=`YoY (25년 ${fmt(k.acc_gpm_25)}%)`;
+
+  $('kv_gp3').textContent=fmtB(gp26*100);
+  setChip('chip_gp3',(gp26-k.cur_gp_25)/k.cur_gp_25*100);
+  $('kl_gp3').textContent=`YoY (${isProj?'예상':'현재'})`;
+  const pb=$('pb_gp3'); if(pb) pb.className='proj-badge'+(isProj?' on':'');
+
+  $('kv_gpm3').textContent=fmt(k.cur_gpm_26);
+  setChip('chip_gpm3',k.cur_gpm_26-k.cur_gpm_25,'%p',true);
+  $('gpm3_lbl').textContent=`YoY (25년 ${fmt(k.cur_gpm_25)}%)`;
+}
+
+function buildYoY() {
+  const k=D.kpi, s26=D.monthly.sales_26, s25=D.monthly.sales_25;
+  const months=D.meta.months_done, lastM=D.meta.last_month;
+  const acc26=sumM(s26,months), acc25=sumM(s25,months);
+  const dom26=D.monthly.domestic_26, dom25=D.monthly.domestic_25;
+  const ov26=D.monthly.overseas_26, ov25=D.monthly.overseas_25;
+
+  const rows=[
+    {n:'전사 누적',   v:acc25>0?(acc26-acc25)/acc25*100:null},
+    {n:`${lastM}월`,  v:s25[lastM]>0?(s26[lastM]-s25[lastM])/s25[lastM]*100:null},
+    {n:'국내 누적',   v:sumM(dom25,months)>0?(sumM(dom26,months)-sumM(dom25,months))/sumM(dom25,months)*100:null},
+    {n:'해외 누적',   v:sumM(ov25,months)>0?(sumM(ov26,months)-sumM(ov25,months))/sumM(ov25,months)*100:null},
+    {n:'Hero 누적',   v:k.hero_acc_25>0?(k.hero_acc_26-k.hero_acc_25)/k.hero_acc_25*100:null},
+    {n:'Champion',    v:k.champ_acc_25>0?(k.champ_acc_26-k.champ_acc_25)/k.champ_acc_25*100:null},
+    {n:'기타 누적',   v:k.other_acc_25>0?(k.other_acc_26-k.other_acc_25)/k.other_acc_25*100:null},
+    {n:'누적 GP',     v:k.acc_gp_25>0?(k.acc_gp_26-k.acc_gp_25)/k.acc_gp_25*100:null},
   ];
 
-  return brands.map(br => {
-    const yoy = br.v25 > 0 ? (br.v26-br.v25)/br.v25*100 : null;
-    const bg = yoy!=null && yoy>=0 ? 'rgba(30,160,80,.08)' : 'rgba(200,40,40,.08)';
-    const c  = yoy!=null && yoy>=0 ? '#1a8040' : '#c0202f';
-    return `<div class="card" style="padding:14px 16px;border-top:2px solid ${br.color}">
-      <div style="font-size:10px;font-weight:600;color:${br.color};letter-spacing:.03em;margin-bottom:8px;text-transform:uppercase">${br.label}</div>
-      <div style="font-size:20px;font-weight:700">${Math.round(br.v26).toLocaleString()}</div>
+  const el=$('yoyList'); if(!el) return;
+  el.innerHTML=rows.map(r=>{
+    const v=r.v; const pos=v!=null&&v>=0;
+    const w=v!=null?Math.min(46,Math.abs(v)*.7):0;
+    const c=pos?'#4ade80':'#f05050';
+    return `<div class="yoy-row">
+      <span class="yoy-name">${r.n}</span>
+      <div class="yoy-track"><div class="yoy-zero"></div>
+        ${v!=null?`<div class="yoy-bar" style="left:${pos?'50%':`calc(50% - ${w}%)`};width:${w}%;background:${c};opacity:.8"></div>`:''}
+      </div>
+      <span class="yoy-pct" style="color:${v==null?'#9099b5':c}">${v==null?'—':(pos?'+':'')+v.toFixed(1)+'%'}</span>
+    </div>`;
+  }).join('');
+}
+
+function buildSegKpis() {
+  const k=D.kpi;
+  const segs=[
+    {label:'Hero',           color:'#3b6ef5', v26:k.hero_acc_26,  v25:k.hero_acc_25},
+    {label:'Champion(非다이소)',color:'#e8650a', v26:k.champ_acc_26, v25:k.champ_acc_25},
+    {label:'다이소(전체)',    color:'#0ea97e', v26:k.daiso_acc_26, v25:k.daiso_acc_25},
+    {label:'기타(非다이소)', color:'#7c5ce8', v26:k.other_acc_26, v25:k.other_acc_25},
+  ];
+  const el=$('segKpis'); if(!el) return;
+  el.innerHTML=segs.map(s=>{
+    const yoy=s.v25>0?(s.v26-s.v25)/s.v25*100:null;
+    const c=yoy!=null&&yoy>=0?'#1a8040':'#c0202f';
+    const bg=yoy!=null&&yoy>=0?'rgba(30,160,80,.08)':'rgba(200,40,40,.08)';
+    return `<div class="card" style="padding:14px 16px;border-top:2px solid ${s.color}">
+      <div style="font-size:10px;font-weight:600;color:${s.color};letter-spacing:.03em;margin-bottom:8px;text-transform:uppercase">${s.label}</div>
+      <div style="font-size:20px;font-weight:700">${Math.round(s.v26||0).toLocaleString()}</div>
       <div style="font-size:10px;color:var(--text3);margin:3px 0 6px">백만원 누적</div>
       <span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:${bg};color:${c}">${yoy!=null?(yoy>=0?'▲':'▼')+Math.abs(yoy).toFixed(0)+'% YoY':'—'}</span>
     </div>`;
@@ -492,90 +632,46 @@ function buildBrandKpis() {
 
 function buildCharts() {
   const s26=D.monthly.sales_26, s25=D.monthly.sales_25, plan=D.monthly.plan;
-  const months=D.meta.months_done;
-  const labels=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-  const ml = labels.slice(0, Math.max(...months));
+  const months=D.meta.months_done, lastM=D.meta.last_month;
+  const maxM=Math.max(...months);
+  const labels=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'].slice(0,maxM);
+  const k=D.kpi, m=D.meta;
 
   // 전사 추이
-  drawGroupedBar('cTrend', ml,
-    [{data:ml.map((_,i)=>s25[i+1]||0), color:'rgba(59,110,245,.2)'},
-     {data:ml.map((_,i)=>s26[i+1]||null), color:'rgba(79,128,255,.85)'},
-     {type:'line', data:ml.map((_,i)=>plan[i+1]||null), color:'#2dd4b0'}], 220);
+  const extra=isProj&&k.proj_month_sales&&k.cur_month_sales?k.proj_month_sales-k.cur_month_sales:null;
+  const extraArr=labels.map((_,i)=>i===lastM-1&&extra>0?extra:null);
+  drawGroupedBar('cTrend', labels, [
+    {data:labels.map((_,i)=>s25[i+1]||0), color:'rgba(59,110,245,.18)'},
+    {data:labels.map((_,i)=>s26[i+1]||null), color:'rgba(79,128,255,.85)'},
+    {data:extraArr, color:'rgba(200,130,10,.7)'},
+    {type:'line', data:labels.map((_,i)=>plan[i+1]||null), color:'#2dd4b0'},
+  ], 220);
 
   // 국내/해외
   const dom26=D.monthly.domestic_26, dom25=D.monthly.domestic_25;
-  const ov26=D.monthly.overseas_26,  ov25=D.monthly.overseas_25;
-  drawGroupedBar('cChannel', ml,
-    [{data:ml.map((_,i)=>dom25[i+1]||0), color:'rgba(14,169,126,.2)'},
-     {data:ml.map((_,i)=>dom26[i+1]||null), color:'rgba(14,169,126,.85)'},
-     {data:ml.map((_,i)=>ov25[i+1]||0), color:'rgba(124,92,232,.2)'},
-     {data:ml.map((_,i)=>ov26[i+1]||null), color:'rgba(124,92,232,.85)'}], 210);
+  const ov26=D.monthly.overseas_26, ov25=D.monthly.overseas_25;
+  drawGroupedBar('cChannel', labels, [
+    {data:labels.map((_,i)=>dom25[i+1]||0), color:'rgba(14,169,126,.2)'},
+    {data:labels.map((_,i)=>dom26[i+1]||null), color:'rgba(14,169,126,.85)'},
+    {data:labels.map((_,i)=>ov25[i+1]||0), color:'rgba(124,92,232,.2)'},
+    {data:labels.map((_,i)=>ov26[i+1]||null), color:'rgba(124,92,232,.85)'},
+  ], 210);
 
   // 채널 YoY 바
   const ch26=D.channel.acc_26, ch25=D.channel.acc_25;
-  const topChs = Object.entries(ch26).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const topChs=Object.entries(ch26).sort((a,b)=>b[1]-a[1]).slice(0,8);
   drawHBarColored('cChannel2', topChs.map(c=>c[0]),
     topChs.map(c=>ch25[c[0]]||0), topChs.map(c=>c[1]), 240);
-
-  // 브랜드 추이
-  const b26=D.brand.sales_26, b25_=D.brand.sales_25;
-  const d26=D.brand.daiso_26;
-  drawGroupedBar('cBrand', ml,
-    [{data:ml.map((_,i)=>b26.hero?.[i+1]||0), color:'rgba(59,110,245,.85)'},
-     {data:ml.map((_,i)=>b26.champion?.[i+1]||0), color:'rgba(232,101,10,.85)'},
-     {data:ml.map((_,i)=>d26?.[i+1]||0), color:'rgba(14,169,126,.85)'},
-     {data:ml.map((_,i)=>b26.other?.[i+1]||0), color:'rgba(124,92,232,.85)'}], 220);
-}
-
-function buildYoY() {
-  const s26=D.monthly.sales_26, s25=D.monthly.sales_25;
-  const gp26=D.monthly.gp_26, gp25=D.monthly.gp_25;
-  const dom26=D.monthly.domestic_26, dom25=D.monthly.domestic_25;
-  const ov26=D.monthly.overseas_26, ov25=D.monthly.overseas_25;
-  const b26=D.brand.sales_26, b25=D.brand.sales_25;
-  const months=D.meta.months_done;
-
-  const acc = (obj, ms) => ms.reduce((a,m)=>a+(obj[m]||0),0);
-  const yoy = (v26,v25) => v25>0?(v26-v25)/v25*100:null;
-
-  const rows = [
-    {n:'전사 누적 매출', v: yoy(acc(s26,months), acc(s25,months))},
-    {n:'전사 최신월',    v: yoy(s26[D.meta.last_month], s25[D.meta.last_month])},
-    {n:'국내 누적',      v: yoy(acc(dom26,months), acc(dom25,months))},
-    {n:'해외 누적',      v: yoy(acc(ov26,months), acc(ov25,months))},
-    {n:'Hero 누적',      v: yoy(acc(b26.hero||{},months), acc(b25.hero||{},months))},
-    {n:'Champion 누적',  v: yoy(acc(b26.champion||{},months), acc(b25.champion||{},months))},
-    {n:'기타 누적',      v: yoy(acc(b26.other||{},months), acc(b25.other||{},months))},
-    {n:'누적 GP',        v: yoy(acc(gp26,months), acc(gp25,months))},
-  ];
-
-  const el = $('yoyList');
-  if (!el) return;
-  el.innerHTML = rows.map(r => {
-    const v = r.v;
-    const pos = v != null && v >= 0;
-    const w = v != null ? Math.min(46, Math.abs(v) * 0.7) : 0;
-    const c = pos ? '#4ade80' : '#f05050';
-    return `<div class="yoy-row">
-      <span class="yoy-name">${r.n}</span>
-      <div class="yoy-track">
-        <div class="yoy-zero"></div>
-        ${v!=null?`<div class="yoy-bar" style="left:${pos?'50%':`calc(50% - ${w}%)`};width:${w}%;background:${c};opacity:.8"></div>`:''}
-      </div>
-      <span class="yoy-pct" style="color:${v==null?'#9099b5':c}">${v==null?'—':(pos?'+':'')+v.toFixed(1)+'%'}</span>
-    </div>`;
-  }).join('');
 }
 
 function buildChannelTable() {
   const ch26=D.channel.acc_26, ch25=D.channel.acc_25;
-  const el=$('channelTableBody');
-  if (!el) return;
-  const top = Object.entries(ch26).sort((a,b)=>b[1]-a[1]).slice(0,10);
-  el.innerHTML = top.map(([ch, v26]) => {
-    const v25 = ch25[ch] || 0;
-    const yoy = v25>0 ? (v26-v25)/v25*100 : null;
-    const c = yoy==null?'#9099b5':yoy>=0?'#1a8040':'#c0202f';
+  const el=$('channelTableBody'); if(!el) return;
+  const top=Object.entries(ch26).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  el.innerHTML=top.map(([ch,v26])=>{
+    const v25=ch25[ch]||0;
+    const yoy=v25>0?(v26-v25)/v25*100:null;
+    const c=yoy==null?'#9099b5':yoy>=0?'#1a8040':'#c0202f';
     return `<tr>
       <td>${ch}</td>
       <td>${Math.round(v26).toLocaleString()}</td>
@@ -586,33 +682,85 @@ function buildChannelTable() {
 }
 
 function buildSkuGrid() {
-  const sku = D.sku_by_channel;
-  const el = $('skuGrid');
-  if (!el) return;
-  const topChs = Object.entries(D.channel.acc_26).sort((a,b)=>b[1]-a[1]).slice(0,6).map(c=>c[0]);
-  el.innerHTML = topChs.map(ch => {
-    const items = sku[ch] || [];
-    const max = items[0]?.v26 || 1;
+  const sku=D.sku_by_channel;
+  const el=$('skuGrid'); if(!el) return;
+  const topChs=Object.entries(D.channel.acc_26).sort((a,b)=>b[1]-a[1]).slice(0,6).map(c=>c[0]);
+  el.style.gridTemplateColumns='repeat(3,1fr)';
+  el.innerHTML=topChs.map(ch=>{
+    const items=sku[ch]||[];
+    const max=items[0]?.v26||1;
     return `<div class="card" style="padding:16px">
-      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px">📦 ${ch}</div>
+      <div style="font-size:12px;font-weight:600;margin-bottom:10px">📦 ${ch}</div>
       ${items.map(s=>{
-        const w = (s.v26/max*100).toFixed(0);
+        const w=(s.v26/max*100).toFixed(0);
         return `<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border)">
           <div style="flex:1;font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
-          <div style="width:40px;height:4px;background:var(--bg4);border-radius:2px;flex-shrink:0;overflow:hidden">
+          <div style="width:40px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;flex-shrink:0">
             <div style="width:${w}%;height:100%;background:#4f80ff;border-radius:2px"></div>
           </div>
-          <span style="font-size:11px;font-weight:600;min-width:32px;text-align:right;flex-shrink:0">${s.v26.toFixed(1)}</span>
+          <span style="font-size:11px;font-weight:600;min-width:32px;text-align:right;flex-shrink:0">${s.v26?.toFixed(1)}</span>
         </div>`;
       }).join('')}
     </div>`;
   }).join('');
 }
 
-window.addEventListener('load', loadAndRender);
-window.addEventListener('resize', () => {
-  if (D) buildCharts();
-});
+function buildInsights() {
+  const k=D.kpi, m=D.meta;
+  const s26=D.monthly.sales_26, s25=D.monthly.sales_25;
+  const months=m.months_done, lastM=m.last_month;
+  const acc26=sumM(s26,months), acc25=sumM(s25,months);
+  const accPlan=Object.values(D.monthly.plan).slice(0,months.length).reduce((a,b)=>a+b,0);
+  const yoyAcc=acc25>0?(acc26-acc25)/acc25*100:0;
+  const achvAcc=acc26/accPlan*100;
+  const pct=Math.round(m.days_elapsed/m.days_in_month*100);
+  const proj=k.proj_month_sales;
+  const yoyM=s25[lastM]>0?(s26[lastM]-s25[lastM])/s25[lastM]*100:0;
+  const yoyProj=s25[lastM]>0?(proj-(s25[lastM]||0))/(s25[lastM]||1)*100:0;
+
+  $('ins1').innerHTML=`1~${lastM}월 누적 <strong>${fmtB(acc26*100)}억</strong>. 전년 대비 <strong class="${yoyAcc>=0?'ok':'hi'}">${yoyAcc>=0?'▲':'▼'}${Math.abs(yoyAcc).toFixed(1)}%</strong>. 계획 달성률 <strong>${achvAcc.toFixed(1)}%</strong>.`;
+  $('ins2').innerHTML=`${lastM}월 현재 ${pct}% 경과 (${m.days_elapsed}/${m.days_in_month}일). 현재 YoY <strong class="${yoyM>=0?'ok':'hi'}">${yoyM>=0?'▲':'▼'}${Math.abs(yoyM).toFixed(1)}%</strong>. 월말 예상 ${fmtB(proj*100)}억 / YoY <strong class="${yoyProj>=0?'ok':'hi'}">${yoyProj>=0?'+':''}${yoyProj.toFixed(1)}%</strong>.`;
+  $('ins3').innerHTML=`누적 GP <strong>${fmtB(k.acc_gp_26*100)}억</strong> (GPM ${fmt(k.acc_gpm_26)}%). 전년 대비 GP <strong class="${k.acc_gp_26>=k.acc_gp_25?'ok':'hi'}">${k.acc_gp_26>=k.acc_gp_25?'▲':'▼'}${Math.abs((k.acc_gp_26-k.acc_gp_25)/k.acc_gp_25*100).toFixed(1)}%</strong>.`;
+
+  const heroYoy=k.hero_acc_25>0?(k.hero_acc_26-k.hero_acc_25)/k.hero_acc_25*100:0;
+  $('ins4').innerHTML=`Hero 누적 <strong>${Math.round(k.hero_acc_26||0).toLocaleString()}백만</strong>. YoY <strong class="${heroYoy>=0?'ok':'hi'}">${heroYoy>=0?'▲':'▼'}${Math.abs(heroYoy).toFixed(1)}%</strong>.`;
+
+  const champYoy=k.champ_acc_25>0?(k.champ_acc_26-k.champ_acc_25)/k.champ_acc_25*100:0;
+  $('ins5').innerHTML=`Champion(非다이소) 누적 <strong>${Math.round(k.champ_acc_26||0).toLocaleString()}백만</strong>. YoY <strong class="${champYoy>=0?'ok':'hi'}">${champYoy>=0?'▲':'▼'}${Math.abs(champYoy).toFixed(1)}%</strong>.`;
+
+  const otherYoy=k.other_acc_25>0?(k.other_acc_26-k.other_acc_25)/k.other_acc_25*100:0;
+  $('ins6').innerHTML=`기타 누적 <strong>${Math.round(k.other_acc_26||0).toLocaleString()}백만</strong>. YoY <strong class="${otherYoy>=0?'ok':'hi'}">${otherYoy>=0?'▲':'▼'}${Math.abs(otherYoy).toFixed(1)}%</strong>.`;
+}
+
+function toggleProj() {
+  isProj=!isProj;
+  const btn=$('togBtn');
+  btn.classList.toggle('active',isProj);
+  $('lblA').classList.toggle('on',!isProj);
+  $('lblP').classList.toggle('on',isProj);
+  $('projNote').classList.toggle('on',isProj);
+  $('legProj').style.display=isProj?'':'none';
+  $('trendSub').textContent=isProj?'25년 실적 vs 26년 실적 (월말 예상) vs 사업계획':'25년 실적 vs 26년 실적 (현재) vs 사업계획';
+  $('yoySub').textContent=isProj?'월말 예상 기준 (%)':'최신월 기준 (%)';
+  updateKPIs();
+  updateGPKPIs();
+  buildYoY();
+  buildCharts();
+}
+
+function initNav() {
+  document.querySelectorAll('.nav-item[data-sec]').forEach(item=>{
+    item.addEventListener('click',()=>{
+      const el=document.getElementById(item.dataset.sec);
+      if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+      document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+}
+
+window.addEventListener('load', init);
+window.addEventListener('resize', ()=>{ if(D) buildCharts(); drawGPMTrend(); });
 </script>
 </body>
 </html>
